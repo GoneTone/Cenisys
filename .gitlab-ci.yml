@@ -2,6 +2,7 @@ stages:
  - build
  
 compile:
+  image: itxtech/docker-env-cenisys
   stage: build
   script:
    - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=release .
