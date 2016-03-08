@@ -5,11 +5,15 @@ compile:
   image: itxtech/docker-env-cenisys
   stage: build
   script:
-   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=release .
+   - mkdir -p build
+   - cd build
+   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../release ../
    - make install
   cache:
     key: "$CI_BUILD_NAME/$CI_BUILD_REF_NAME"
     untracked: true
+    paths:
+     - build/
   artifacts:
     paths:
      - release/
