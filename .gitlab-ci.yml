@@ -1,0 +1,16 @@
+stages:
+ - build
+ 
+compile:
+  stage: build
+  script:
+   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=release .
+   - make install
+  only:
+   - master
+  cache:
+    key: "$CI_BUILD_NAME/$CI_BUILD_REF_NAME"
+    untracked: true
+  artifacts:
+    paths:
+     - release/

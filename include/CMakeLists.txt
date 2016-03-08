@@ -1,0 +1,1 @@
+install(DIRECTORY . DESTINATION include/cenisys FILES_MATCHING PATTERN "*.h")
