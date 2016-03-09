@@ -1,13 +1,32 @@
-# C++ objects and libs
+
+# Compiled Object files
 *.slo
 *.lo
 *.o
-*.a
-*.la
-*.lai
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
 *.so
-*.dll
 *.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
 
 # Qt-es
 /.qmake.cache
@@ -32,3 +51,4 @@ Makefile*
 
 # Qt Creator CMake
 CMakeLists.txt.user
+CMakeLists.txt.user.*
