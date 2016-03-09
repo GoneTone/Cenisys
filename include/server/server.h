@@ -21,7 +21,7 @@
 #define SERVER_H
 class Server
 {
-  public:
+public:
     Server() {}
     virtual ~Server() {}
     virtual int run() = 0;

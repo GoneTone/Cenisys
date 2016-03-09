@@ -22,7 +22,7 @@
 #include "server/server.h"
 class CenisysServer : public Server
 {
-  public:
+public:
     CenisysServer();
     ~CenisysServer();
     int run();

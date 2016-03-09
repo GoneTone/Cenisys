@@ -19,6 +19,7 @@
  */
 #include <memory>
 #include "server/cenisysserver.h"
+
 int main(int argc, char *argv[])
 {
     std::unique_ptr<Server> server = std::make_unique<CenisysServer>();
