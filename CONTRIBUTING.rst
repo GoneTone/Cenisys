@@ -9,6 +9,7 @@ Issues
 ------
 
 The issue tracker is only for bugs, not for support. Provide the following contents as more as possible for an issue:
+
 - Step to reproduce
 - The version and git hash
 - Anything you tried to fix the problem
@@ -28,5 +29,6 @@ Contributor Agreement
 ---------------------
 
 Please read the following agreement before you file a merge request:
+
 1) The copyright of the code you contributed will be assigned to iTX Technologies, and will be distributed under GPLv3 license.
 2) You are still free to use the code you made for other projects.
