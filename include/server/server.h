@@ -19,11 +19,23 @@
  */
 #ifndef SERVER_H
 #define SERVER_H
+
+namespace cenisys
+{
+//!
+//! \brief The interface for the server.
+//!
 class Server
 {
 public:
     Server() {}
     virtual ~Server() {}
+    //!
+    //! \brief Start running the server.
+    //! \return Zero if stopped by user, non-zero if any error crashed the
+    //! server.
+    //!
     virtual int run() = 0;
 };
+}
 #endif // SERVER_H

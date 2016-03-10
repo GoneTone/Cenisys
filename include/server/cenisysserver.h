@@ -20,11 +20,28 @@
 #ifndef CENISYSSERVER_H
 #define CENISYSSERVER_H
 #include "server/server.h"
+
+namespace cenisys
+{
+//!
+//! \brief The implementation of the Cenisys core.
+//!
 class CenisysServer : public Server
 {
 public:
+    //!
+    //! \brief Prepares for running server.
+    //!
     CenisysServer();
+    //!
+    //! \brief Cleanup a stopped instance.
+    //!
     ~CenisysServer();
+    //!
+    //! \brief run
+    //! \return 0 if terminated gracefully, 1 if crashed.
+    //!
     int run();
 };
+}
 #endif // CENISYSSERVER_H

@@ -19,6 +19,8 @@
  */
 #include "server/cenisysserver.h"
 
+namespace cenisys
+{
 CenisysServer::CenisysServer()
 {
 }
@@ -29,4 +31,5 @@ CenisysServer::~CenisysServer()
 
 int CenisysServer::run()
 {
+}
 }
