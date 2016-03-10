@@ -19,6 +19,7 @@
  */
 #ifndef CENISYSSERVER_H
 #define CENISYSSERVER_H
+#include <boost/asio/io_service.hpp>
 #include "server/server.h"
 
 namespace cenisys
@@ -42,6 +43,8 @@ public:
     //! \return 0 if terminated gracefully, 1 if crashed.
     //!
     int run();
+private:
+    boost::asio::io_service io_service;
 };
 }
 #endif // CENISYSSERVER_H

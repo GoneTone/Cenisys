@@ -31,5 +31,6 @@ CenisysServer::~CenisysServer()
 
 int CenisysServer::run()
 {
+    io_service.run();
 }
 }
