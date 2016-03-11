@@ -22,6 +22,7 @@
 
 int main(int argc, char *argv[])
 {
-    std::unique_ptr<cenisys::Server> server = std::make_unique<cenisys::CenisysServer>();
+    std::unique_ptr<cenisys::Server> server =
+        std::make_unique<cenisys::CenisysServer>();
     server->run();
 }

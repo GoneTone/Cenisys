@@ -17,13 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CENISYSSERVER_H
-#define CENISYSSERVER_H
+#ifndef CENISYS_CENISYSSERVER_H
+#define CENISYS_CENISYSSERVER_H
 #include <boost/asio/io_service.hpp>
 #include "server/server.h"
 
 namespace cenisys
 {
+
 //!
 //! \brief The implementation of the Cenisys core.
 //!
@@ -43,8 +44,11 @@ public:
     //! \return 0 if terminated gracefully, 1 if crashed.
     //!
     int run();
+
 private:
     boost::asio::io_service io_service;
 };
-}
-#endif // CENISYSSERVER_H
+
+} // namespace cenisys
+
+#endif // CENISYS_CENISYSSERVER_H

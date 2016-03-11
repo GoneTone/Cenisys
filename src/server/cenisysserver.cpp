@@ -21,6 +21,7 @@
 
 namespace cenisys
 {
+
 CenisysServer::CenisysServer()
 {
 }
@@ -33,4 +34,5 @@ int CenisysServer::run()
 {
     io_service.run();
 }
-}
+
+} // namespace cenisys

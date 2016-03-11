@@ -17,11 +17,12 @@
  * You should have received a copy of the GNU General Public License
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef SERVER_H
-#define SERVER_H
+#ifndef CENISYS_SERVER_H
+#define CENISYS_SERVER_H
 
 namespace cenisys
 {
+
 //!
 //! \brief The interface for the server.
 //!
@@ -37,5 +38,7 @@ public:
     //!
     virtual int run() = 0;
 };
-}
-#endif // SERVER_H
+
+} // namespace cenisys
+
+#endif // CENISYS_SERVER_H
