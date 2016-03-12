@@ -29,7 +29,6 @@ namespace cenisys
 class Server
 {
 public:
-    Server() {}
     virtual ~Server() {}
     //!
     //! \brief Start running the server.
