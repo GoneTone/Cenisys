@@ -46,7 +46,7 @@ public:
     int run();
 
 private:
-    boost::asio::io_service io_service;
+    boost::asio::io_service _ioService;
 };
 
 } // namespace cenisys
