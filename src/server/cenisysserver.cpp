@@ -17,12 +17,13 @@
  * You should have received a copy of the GNU General Public License
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <functional>
 #include "server/cenisysserver.h"
 
 namespace cenisys
 {
 
-CenisysServer::CenisysServer()
+CenisysServer::CenisysServer() : _termSignals(_ioService, SIGINT, SIGTERM)
 {
 }
 
@@ -32,8 +33,51 @@ CenisysServer::~CenisysServer()
 
 int CenisysServer::run()
 {
+    _ioService.post(std::bind(&CenisysServer::start, this));
     _ioService.run();
     return 0;
+}
+
+void CenisysServer::stop()
+{
+    _termSignals.cancel();
+    _stdinReader.reset();
+    _stdoutLogger.reset();
+}
+
+bool CenisysServer::dispatchCommand(std::string command)
+{
+    for(Server::CommandHandler &handler : _commandList)
+        if(handler(command))
+            return true;
+    _logger.log("Unknown command " + command);
+    return false;
+}
+
+Server::RegisteredCommandHandler
+CenisysServer::registerCommand(Server::CommandHandler handler)
+{
+    std::lock_guard<std::mutex> lock(_registerCommandLock);
+    _commandList.push_back(handler);
+    return std::prev(_commandList.end());
+}
+
+void CenisysServer::unregisterCommand(Server::RegisteredCommandHandler handle)
+{
+    std::lock_guard<std::mutex> lock(_registerCommandLock);
+    _commandList.erase(handle);
+}
+
+ServerLogger &CenisysServer::getLogger()
+{
+    return _logger;
+}
+
+void CenisysServer::start()
+{
+    _stdoutLogger = std::make_unique<StdoutLogger>(*this, _ioService);
+    _stdinReader = std::make_unique<StdinReader>(*this, _ioService);
+    _termSignals.async_wait(std::bind(&Server::stop, this));
 }
 
 } // namespace cenisys

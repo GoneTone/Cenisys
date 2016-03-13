@@ -2,7 +2,10 @@
 find_package(Boost 1.60 COMPONENTS system REQUIRED)
 include_directories("${PROJECT_SOURCE_DIR}/include")
 add_library(cenisys SHARED
-    server/cenisysserver.cpp)
+    server/cenisysserver.cpp
+    server/cenisysserverlogger.cpp
+    server/stdinreader.cpp
+    server/stdoutlogger.cpp)
 target_include_directories(cenisys PUBLIC ${Boost_INCLUDE_DIRS})
 target_link_libraries(cenisys PUBLIC ${Boost_SYSTEM_LIBRARY})
 add_executable(cenisyslauncher main.cpp)

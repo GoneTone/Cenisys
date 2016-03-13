@@ -1,5 +1,5 @@
 /*
- * Launcher for the server.
+ * Read commands from standard input.
  * Copyright (C) 2016 iTX Technologies
  *
  * This file is part of Cenisys.
@@ -17,12 +17,34 @@
  * You should have received a copy of the GNU General Public License
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <memory>
-#include "server/cenisysserver.h"
+#include <functional>
+#include <iostream>
+#include "server/stdinreader.h"
 
-int main(int argc, char *argv[])
+namespace cenisys
 {
-    std::unique_ptr<cenisys::Server> server =
-        std::make_unique<cenisys::CenisysServer>();
-    return server->run();
+
+StdinReader::StdinReader(Server &server, boost::asio::io_service &ioService)
+    : _server(server), _ioService(ioService), _running(true),
+      _asyncThread(std::bind(&StdinReader::asyncWorker, this))
+{
+}
+
+StdinReader::~StdinReader()
+{
+    _running = false;
+    std::cerr << "Please press Enter to continue..." << std::endl;
+    _asyncThread.join();
+}
+
+void StdinReader::asyncWorker()
+{
+    while(_running)
+    {
+        std::string buf;
+        std::getline(std::cin, buf);
+        if(!buf.empty())
+            _ioService.post(std::bind(&Server::dispatchCommand, &_server, buf));
+    }
+}
 }
