@@ -1,6 +1,7 @@
 # TODO: Change this when 1.61 released
 find_package(Boost 1.60 COMPONENTS system REQUIRED)
 include_directories("${PROJECT_SOURCE_DIR}/include")
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 add_library(cenisys SHARED
     server/cenisysserver.cpp
     server/cenisysserverlogger.cpp
