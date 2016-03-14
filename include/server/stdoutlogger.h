@@ -20,7 +20,6 @@
 #ifndef CENISYS_STDOUTLOGGER_H
 #define CENISYS_STDOUTLOGGER_H
 
-#include <atomic>
 #include <condition_variable>
 #include <mutex>
 #include <queue>
@@ -44,7 +43,7 @@ private:
     Server &_server;
     boost::asio::io_service &_ioService;
     ServerLogger::RegisteredLoggerBackend _backendHandle;
-    std::atomic_bool _running;
+    bool _running;
     std::thread _asyncThread;
     std::queue<std::string> _writeQueue;
     std::mutex _writeQueueLock;

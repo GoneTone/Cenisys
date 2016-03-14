@@ -33,7 +33,9 @@ StdoutLogger::StdoutLogger(Server &server, boost::asio::io_service &ioService)
 StdoutLogger::~StdoutLogger()
 {
     _server.getLogger().unregisterBackend(_backendHandle);
+    std::unique_lock<std::mutex> lock(_writeQueueLock);
     _running = false;
+    lock.unlock();
     _queueNotifier.notify_all();
     _asyncThread.join();
 }
@@ -51,7 +53,7 @@ void StdoutLogger::asyncWorker()
     while(_running)
     {
         std::unique_lock<std::mutex> lock(_writeQueueLock);
-        if(_writeQueue.empty())
+        if(_running && _writeQueue.empty())
             _queueNotifier.wait(lock);
         // Note: destructor may notify the thread
         if(!_running)
