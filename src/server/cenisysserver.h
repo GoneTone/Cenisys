@@ -32,56 +32,20 @@
 namespace cenisys
 {
 
-//!
-//! \brief The implementation of the Cenisys core.
-//!
 class CenisysServer : public Server
 {
 public:
-    //!
-    //! \brief Prepare for running server. Work are done in single thread.
-    //!
     CenisysServer();
-    //!
-    //! \brief Cleanup a stopped instance.
-    //!
     ~CenisysServer();
 
-    //!
-    //! \brief Start running the server.
-    //! \return 0 if terminated gracefully, 1 if crashed.
-    //!
     int run();
-
-    //!
-    //! \brief Stop running the server. The run function will return then.
-    //!
     void stop();
 
-    //!
-    //! \brief Process a command.
-    //! \param command The command and arguments.
-    //! \return true if the command is registered.
-    //!
     bool dispatchCommand(std::string command);
 
-    //!
-    //! \brief Register a command.
-    //! \param handler The command handler function.
-    //! \return A handle to unregister the handler.
-    //!
     RegisteredCommandHandler registerCommand(CommandHandler handler);
-
-    //!
-    //! \brief Unregister the command.
-    //! \param handle The function handle.
-    //!
     void unregisterCommand(RegisteredCommandHandler handle);
 
-    //!
-    //! \brief Get the logger of the server.
-    //! \return The server's logger object.
-    //!
     ServerLogger &getLogger();
 
 private:

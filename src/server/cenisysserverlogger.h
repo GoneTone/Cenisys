@@ -30,32 +30,12 @@ namespace cenisys
 class CenisysServerLogger : public ServerLogger
 {
 public:
-    //!
-    //! \brief Allocate a logger.
-    //!
     CenisysServerLogger();
-    //!
-    //!\brief Free a logger.
-    //!
     ~CenisysServerLogger();
 
-    //!
-    //! \brief Write the line to server console.
-    //! \param content The content to write.
-    //!
     void log(const std::string &content);
 
-    //!
-    //! \brief Register a backend of console logger.
-    //! \param backend The function to call.
-    //! \return A handle to unregister the backend.
-    //!
     RegisteredLoggerBackend registerBackend(LoggerBackend backend);
-
-    //!
-    //! \brief Remove the backend from the registered list.
-    //! \param backend The handle returned by registerBackend.
-    //!
     void unregisterBackend(RegisteredLoggerBackend handle);
 
 private:
