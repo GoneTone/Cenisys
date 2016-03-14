@@ -38,7 +38,7 @@ public:
     using CommandHandlerList = std::list<CommandHandler>;
     using RegisteredCommandHandler = CommandHandlerList::const_iterator;
 
-    virtual ~Server() {}
+    virtual ~Server() = default;
 
     //!
     //! \brief Start running the server.

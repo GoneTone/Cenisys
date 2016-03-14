@@ -34,7 +34,7 @@ public:
     using BackendList = std::list<LoggerBackend>;
     using RegisteredLoggerBackend = BackendList::const_iterator;
 
-    virtual ~ServerLogger() {}
+    virtual ~ServerLogger() = default;
 
     //!
     //! \brief Log some text to the server log.
