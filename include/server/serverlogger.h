@@ -51,7 +51,7 @@ public:
 
     //!
     //! \brief Unregister the logger backend.
-    //! \param backend The handle returned by registerBackend.
+    //! \param handle The handle returned by registerBackend.
     //!
     virtual void unregisterBackend(RegisteredLoggerBackend handle) = 0;
 };
