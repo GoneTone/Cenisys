@@ -53,4 +53,4 @@ void StdinReader::asyncWorker()
     }
 }
 
-}
+} // namespace cenisys

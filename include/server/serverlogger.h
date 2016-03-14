@@ -55,6 +55,7 @@ public:
     //!
     virtual void unregisterBackend(RegisteredLoggerBackend handle) = 0;
 };
-}
+
+} // namespace cenisys
 
 #endif // CENISYS_SERVERLOGGER_H
