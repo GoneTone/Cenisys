@@ -20,6 +20,11 @@
 #ifndef CENISYS_SERVER_H
 #define CENISYS_SERVER_H
 
+#include <functional>
+#include <list>
+#include <string>
+#include "server/serverlogger.h"
+
 namespace cenisys
 {
 
@@ -29,13 +34,50 @@ namespace cenisys
 class Server
 {
 public:
-    virtual ~Server() {}
+    using CommandHandler = std::function<bool(const std::string &)>;
+    using CommandHandlerList = std::list<CommandHandler>;
+    using RegisteredCommandHandler = CommandHandlerList::const_iterator;
+
+    virtual ~Server() = default;
+
     //!
     //! \brief Start running the server.
     //! \return Zero if stopped by user, non-zero if any error crashed the
     //! server.
     //!
     virtual int run() = 0;
+
+    //!
+    //! \brief Stop the server. Must be called from the server thread.
+    //!
+    virtual void stop() = 0;
+
+    //!
+    //! \brief Process a command.
+    //! \param command The command and arguments, without the leading slash.
+    //! \return true on success, false if command does not exist.
+    //!
+    virtual bool dispatchCommand(std::string command) = 0;
+
+    //!
+    //! \brief Register a command.
+    //! \param handler The function which processes the command.
+    //! \return A handle to unregister the command.
+    //!
+    virtual RegisteredCommandHandler
+    registerCommand(CommandHandler handler) = 0;
+
+    //!
+    //! \brief Unregister the command.
+    //! \param handle The return value of registerCommand.
+    //!
+    virtual void unregisterCommand(RegisteredCommandHandler handle) = 0;
+
+    //!
+    //! \brief Get the server's logger.
+    //! \return Reference to the server's logger.
+    //!
+    virtual ServerLogger &getLogger() = 0;
 };
 
 } // namespace cenisys

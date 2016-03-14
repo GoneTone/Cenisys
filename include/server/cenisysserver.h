@@ -19,8 +19,15 @@
  */
 #ifndef CENISYS_CENISYSSERVER_H
 #define CENISYS_CENISYSSERVER_H
+
+#include <memory>
+#include <mutex>
 #include <boost/asio/io_service.hpp>
+#include <boost/asio/signal_set.hpp>
 #include "server/server.h"
+#include "server/cenisysserverlogger.h"
+#include "server/stdinreader.h"
+#include "server/stdoutlogger.h"
 
 namespace cenisys
 {
@@ -32,21 +39,61 @@ class CenisysServer : public Server
 {
 public:
     //!
-    //! \brief Prepares for running server.
+    //! \brief Prepare for running server. Work are done in single thread.
     //!
     CenisysServer();
     //!
     //! \brief Cleanup a stopped instance.
     //!
     ~CenisysServer();
+
     //!
-    //! \brief run
+    //! \brief Start running the server.
     //! \return 0 if terminated gracefully, 1 if crashed.
     //!
     int run();
 
+    //!
+    //! \brief Stop running the server. The run function will return then.
+    //!
+    void stop();
+
+    //!
+    //! \brief Process a command.
+    //! \param command The command and arguments.
+    //! \return true if the command is registered.
+    //!
+    bool dispatchCommand(std::string command);
+
+    //!
+    //! \brief Register a command.
+    //! \param handler The command handler function.
+    //! \return A handle to unregister the handler.
+    //!
+    RegisteredCommandHandler registerCommand(CommandHandler handler);
+
+    //!
+    //! \brief Unregister the command.
+    //! \param handle The function handle.
+    //!
+    void unregisterCommand(RegisteredCommandHandler handle);
+
+    //!
+    //! \brief Get the logger of the server.
+    //! \return The server's logger object.
+    //!
+    ServerLogger &getLogger();
+
 private:
+    void start();
+
     boost::asio::io_service _ioService;
+    boost::asio::signal_set _termSignals;
+    CommandHandlerList _commandList;
+    std::mutex _registerCommandLock;
+    CenisysServerLogger _logger;
+    std::unique_ptr<StdinReader> _stdinReader;
+    std::unique_ptr<StdoutLogger> _stdoutLogger;
 };
 
 } // namespace cenisys
