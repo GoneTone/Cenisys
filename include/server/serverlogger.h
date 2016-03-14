@@ -32,7 +32,7 @@ class ServerLogger
 public:
     using LoggerBackend = std::function<void(std::string)>;
     using BackendList = std::list<LoggerBackend>;
-    using RegisteredLoggerBackend = BackendList::iterator;
+    using RegisteredLoggerBackend = BackendList::const_iterator;
 
     virtual ~ServerLogger() {}
 

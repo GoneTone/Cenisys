@@ -36,7 +36,7 @@ class Server
 public:
     using CommandHandler = std::function<bool(const std::string &)>;
     using CommandHandlerList = std::list<CommandHandler>;
-    using RegisteredCommandHandler = CommandHandlerList::iterator;
+    using RegisteredCommandHandler = CommandHandlerList::const_iterator;
 
     virtual ~Server() {}
 
