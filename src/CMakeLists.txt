@@ -17,6 +17,14 @@ add_library(cenisys SHARED
     server/cenisysserver.cpp
     server/threadedterminalconsole.cpp
     server/cenisysconfigmanager.cpp
+    server/cenisyschunk.cpp
+    block/cenisysblock.cpp
+    block/blockface.cpp
+    util/vector.cpp
+    util/location.cpp
+    material/material.cpp
+    material/air.cpp
+    inventory/itemstack.cpp
     )
 target_link_libraries(cenisys PRIVATE
     Threads::Threads

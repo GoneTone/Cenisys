@@ -66,6 +66,8 @@ public:
 
     std::shared_ptr<ConfigSection> getConfig(const std::string &name);
 
+    std::shared_ptr<World> getWorld(std::string name);
+
 private:
     enum class State
     {

@@ -237,4 +237,9 @@ void CenisysServer::waitCriticalTask(std::atomic_size_t &counter)
     }
 }
 
+std::shared_ptr<cenisys::World>
+cenisys::CenisysServer::getWorld(std::string name)
+{
+}
+
 } // namespace cenisys

@@ -32,6 +32,7 @@ namespace cenisys
 {
 
 class ConfigSection;
+class World;
 
 //!
 //! \brief The interface for the server.
@@ -115,6 +116,13 @@ public:
 
     virtual std::shared_ptr<ConfigSection>
     getConfig(const std::string &name) = 0;
+
+    //!
+    //! \brief Get a world by name.
+    //! \param name Name of the world.
+    //! \return The world if exists, or nullptr if not.
+    //!
+    virtual std::shared_ptr<World> getWorld(std::string name) = 0;
 };
 
 } // namespace cenisys
