@@ -7,8 +7,8 @@ compile:
   script:
    - mkdir -p build
    - cd build
-   - cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../release ../
-   - make install
+   - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../release ../
+   - ninja install
   cache:
     key: "$CI_BUILD_NAME/$CI_BUILD_REF_NAME"
     paths:
