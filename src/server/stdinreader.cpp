@@ -47,7 +47,7 @@ void StdinReader::asyncWorker()
             _ioService.post(std::bind(&Server::dispatchCommand, &_server, buf));
         if(std::cin.eof())
         {
-            _ioService.post(std::bind(&Server::stop, &_server));
+            _ioService.post(std::bind(&Server::terminate, &_server));
             break;
         }
     }

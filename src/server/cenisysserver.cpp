@@ -18,6 +18,7 @@
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <functional>
+#include <mutex>
 #include "server/cenisysserver.h"
 
 namespace cenisys
@@ -33,16 +34,14 @@ CenisysServer::~CenisysServer()
 
 int CenisysServer::run()
 {
-    _ioService.post(std::bind(&CenisysServer::start, this));
+    start();
     _ioService.run();
     return 0;
 }
 
-void CenisysServer::stop()
+void CenisysServer::terminate()
 {
-    _termSignals.cancel();
-    _stdinReader.reset();
-    _stdoutLogger.reset();
+    std::call_once(_stopFlag,std::bind(&CenisysServer::stop,this));
 }
 
 bool CenisysServer::dispatchCommand(std::string command)
@@ -75,9 +74,16 @@ ServerLogger &CenisysServer::getLogger()
 
 void CenisysServer::start()
 {
-    _stdoutLogger = std::make_unique<StdoutLogger>(*this, _ioService);
-    _stdinReader = std::make_unique<StdinReader>(*this, _ioService);
-    _termSignals.async_wait(std::bind(&Server::stop, this));
+    _ioService.post([this]{ _stdoutLogger = std::make_unique<StdoutLogger>(*this, _ioService);});
+    _ioService.post([this]{ _stdinReader = std::make_unique<StdinReader>(*this, _ioService);});
+    _termSignals.async_wait(std::bind(&Server::terminate, this));
+}
+
+void CenisysServer::stop()
+{
+    _termSignals.cancel();
+    _ioService.post([this]{_stdinReader.reset();});
+    _ioService.post([this]{_stdoutLogger.reset();});
 }
 
 } // namespace cenisys

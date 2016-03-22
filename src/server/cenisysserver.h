@@ -39,7 +39,7 @@ public:
     ~CenisysServer();
 
     int run();
-    void stop();
+    void terminate();
 
     bool dispatchCommand(std::string command);
 
@@ -50,7 +50,9 @@ public:
 
 private:
     void start();
+    void stop();
 
+    std::once_flag _stopFlag;
     boost::asio::io_service _ioService;
     boost::asio::signal_set _termSignals;
     CommandHandlerList _commandList;
@@ -58,6 +60,7 @@ private:
     CenisysServerLogger _logger;
     std::unique_ptr<StdinReader> _stdinReader;
     std::unique_ptr<StdoutLogger> _stdoutLogger;
+
 };
 
 } // namespace cenisys

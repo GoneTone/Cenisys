@@ -50,7 +50,7 @@ public:
     //!
     //! \brief Stop the server. Must be called from the server thread.
     //!
-    virtual void stop() = 0;
+    virtual void terminate() = 0;
 
     //!
     //! \brief Process a command.
