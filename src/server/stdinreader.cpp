@@ -33,7 +33,8 @@ StdinReader::StdinReader(Server &server, boost::asio::io_service &ioService)
 StdinReader::~StdinReader()
 {
     _running = false;
-    std::cerr << "Please press Enter to continue..." << std::endl;
+    if(std::cin)
+        std::cerr << "Please press Enter to continue..." << std::endl;
     _asyncThread.join();
 }
 
@@ -45,7 +46,7 @@ void StdinReader::asyncWorker()
         std::getline(std::cin, buf);
         if(!buf.empty())
             _ioService.post(std::bind(&Server::dispatchCommand, &_server, buf));
-        if(std::cin.eof())
+        if(!std::cin)
         {
             _ioService.post(std::bind(&Server::terminate, &_server));
             break;
