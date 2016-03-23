@@ -42,14 +42,6 @@ private:
     int _modZ;
 };
 
-const BlockFace BlockFace::UP(0, 1, 0);
-const BlockFace BlockFace::DOWN(0, -1, 0);
-const BlockFace BlockFace::NORTH(0, 0, -1);
-const BlockFace BlockFace::EAST(1, 0, 0);
-const BlockFace BlockFace::SOUTH(0, 0, 1);
-const BlockFace BlockFace::WEST(-1, 0, 0);
-const BlockFace BlockFace::SELF(0, 0, 0);
-
 } // namespace cenisys
 
 #endif // CENISYS_BLOCKFACE_H
