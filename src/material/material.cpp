@@ -93,10 +93,13 @@ bool BlockMaterial::blockInteract(Player &player, Block &target,
 void BlockMaterial::destroyBlock(Player &player, Block &target,
                                  const BlockFace &face)
 {
+    // Beware: The following line commits suicide, the behavior is well-defined
+    // only if it's the last line
     target.setMaterial(new Air);
 }
 
-void BlockMaterial::blockUpdate(Block &target)
+bool BlockMaterial::blockUpdate(Block &target)
 {
+    return false;
 }
 }

@@ -46,17 +46,6 @@ int Air::getMaxStackSize() const
     return 0;
 }
 
-void Air::rightClickAir(Player &player, ItemStack &holding)
-{
-    // Do nothing
-}
-
-void Air::rightClickBlock(Player &player, Block &target, const BlockFace &face,
-                          ItemStack &holding, const Vector &clickedLoc)
-{
-    // Do nothing
-}
-
 std::vector<ItemStack> Air::getDrops(const ItemStack &tool) const
 {
     return {};
@@ -83,19 +72,9 @@ void Air::placeBlock(Player &player, Block &target, const BlockFace &face,
     // TODO: throw
 }
 
-bool Air::blockInteract(Player &player, Block &target, const BlockFace &face,
-                        const Vector &clickedLoc)
-{
-    return false;
-}
-
 void Air::destroyBlock(Player &player, Block &target, const BlockFace &face)
 {
     // TODO: throw
-}
-
-void Air::blockUpdate(Block &target)
-{
 }
 
 } // namespace cenisys

@@ -29,8 +29,7 @@ ItemStack::ItemStack(ItemMaterial *material, int amount)
 }
 
 ItemStack::ItemStack(std::unique_ptr<ItemMaterial> &&material, int amount)
-    : _amount(amount),
-      _material(std::forward<std::unique_ptr<ItemMaterial>>(material))
+    : _amount(amount), _material(std::move(material))
 {
 }
 
@@ -77,7 +76,7 @@ void ItemStack::setMaterial(ItemMaterial *material)
 
 void ItemStack::setMaterial(std::unique_ptr<ItemMaterial> &&material)
 {
-    _material = std::forward<std::unique_ptr<ItemMaterial>>(material);
+    _material = std::move(material);
 }
 
 } // namespace cenisys

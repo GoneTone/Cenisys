@@ -35,9 +35,6 @@ public:
     std::string getName() const;
 
     int getMaxStackSize() const;
-    void rightClickAir(Player &player, ItemStack &holding);
-    void rightClickBlock(Player &player, Block &target, const BlockFace &face,
-                         ItemStack &holding, const Vector &clickedLoc);
 
     std::vector<ItemStack> getDrops(const ItemStack &tool) const;
     bool canAbsorb();
@@ -45,10 +42,7 @@ public:
     bool canPlaceAt(const Block &target, const BlockFace &face) const;
     void placeBlock(Player &player, Block &target, const BlockFace &face,
                     const Vector &clickedLoc);
-    bool blockInteract(Player &player, Block &target, const BlockFace &face,
-                       const Vector &clickedLoc);
     void destroyBlock(Player &player, Block &target, const BlockFace &face);
-    void blockUpdate(Block &target);
 };
 
 } // namespace cenisys

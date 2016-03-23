@@ -36,9 +36,9 @@ public:
 
     const BlockMaterial &getMaterial() const;
     BlockMaterial &getMaterial();
-    void setMaterial(BlockMaterial *material, bool blockUpdate = true);
+    void setMaterial(BlockMaterial *material, bool updatePhysics = true);
     void setMaterial(std::unique_ptr<BlockMaterial> &&material,
-                     bool blockUpdate = true);
+                     bool updatePhysics = true);
     std::shared_ptr<World> getWorld() const;
     std::unique_ptr<Block> getRelative(const BlockFace &face) const;
     std::unique_ptr<Block> getRelative(int modX, int modY, int modZ) const;
@@ -47,6 +47,8 @@ public:
     char getSkyLight() const;
     char getBlockLight() const;
     char getLightLevel() const;
+
+    bool blockUpdate();
 
 private:
     std::unique_ptr<BlockMaterial> &_material;

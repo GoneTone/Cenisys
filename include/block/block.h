@@ -42,9 +42,9 @@ public:
     virtual const BlockMaterial &getMaterial() const = 0;
     virtual BlockMaterial &getMaterial() = 0;
     virtual void setMaterial(BlockMaterial *material,
-                             bool blockUpdate = true) = 0;
+                             bool updatePhysics = true) = 0;
     virtual void setMaterial(std::unique_ptr<BlockMaterial> &&material,
-                             bool blockUpdate = true) = 0;
+                             bool updatePhysics = true) = 0;
 
     virtual const Location &getLocation() const = 0;
     virtual std::shared_ptr<World> getWorld() const = 0;
@@ -55,6 +55,8 @@ public:
     virtual char getSkyLight() const = 0;
     virtual char getBlockLight() const = 0;
     virtual char getLightLevel() const = 0;
+
+    virtual bool blockUpdate() = 0;
 
     // TODO: Block entities
 };

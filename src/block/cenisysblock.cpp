@@ -50,17 +50,27 @@ BlockMaterial &CenisysBlock::getMaterial()
     return *_material;
 }
 
-void CenisysBlock::setMaterial(BlockMaterial *material, bool blockUpdate)
+void CenisysBlock::setMaterial(BlockMaterial *material, bool updatePhysics)
 {
-    setMaterial(std::unique_ptr<BlockMaterial>(material), blockUpdate);
+    setMaterial(std::unique_ptr<BlockMaterial>(material), updatePhysics);
 }
 
 void CenisysBlock::setMaterial(std::unique_ptr<BlockMaterial> &&material,
-                               bool blockUpdate)
+                               bool updatePhysics)
 {
-    // TODO: Should we check for nullptr?
-    // TODO: Block updates
-    _material = std::forward<std::unique_ptr<BlockMaterial>>(material);
+    if(!material)
+    {
+        // TODO: throw
+    }
+    std::unique_ptr<BlockMaterial> oldMaterial = std::move(_material);
+    _material = std::move(material);
+    if(updatePhysics)
+    {
+        if(oldMaterial->blockUpdate(*this))
+        {
+            blockUpdate();
+        }
+    }
 }
 
 std::shared_ptr<World> CenisysBlock::getWorld() const
@@ -76,9 +86,9 @@ std::unique_ptr<Block> CenisysBlock::getRelative(const BlockFace &face) const
 std::unique_ptr<Block> CenisysBlock::getRelative(int modX, int modY,
                                                  int modZ) const
 {
-    return getWorld()->getBlockAt(_location.getX() + modX,
-                                  _location.getY() + modY,
-                                  _location.getZ() + modZ);
+    return getWorld()->getBlockAt(static_cast<int>(_location.getX()) + modX,
+                                  static_cast<int>(_location.getY()) + modY,
+                                  static_cast<int>(_location.getZ()) + modZ);
 }
 
 const Location &CenisysBlock::getLocation() const
@@ -99,5 +109,21 @@ char CenisysBlock::getBlockLight() const
 char CenisysBlock::getLightLevel() const
 {
     return std::max(_skyLight, _blockLight);
+}
+
+bool CenisysBlock::blockUpdate()
+{
+    if(_material->blockUpdate(*this))
+    {
+        // Something changed, trigger further updates
+        for(const BlockFace &direction :
+            {BlockFace::UP, BlockFace::DOWN, BlockFace::NORTH, BlockFace::EAST,
+             BlockFace::SOUTH, BlockFace::WEST})
+        {
+            getRelative(direction)->blockUpdate();
+        }
+        return true;
+    }
+    return false;
 }
 } // namespace cenisys

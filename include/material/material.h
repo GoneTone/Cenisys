@@ -91,7 +91,7 @@ public:
     //!
     virtual void destroyBlock(Player &player, Block &target,
                               const BlockFace &face);
-    virtual void blockUpdate(Block &target);
+    virtual bool blockUpdate(Block &target);
 };
 
 } // namespace cenisys
