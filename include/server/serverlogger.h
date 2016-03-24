@@ -23,6 +23,9 @@
 #include <functional>
 #include <list>
 #include <string>
+#include <tuple>
+#include <boost/locale/format.hpp>
+#include <boost/locale/message.hpp>
 
 namespace cenisys
 {
@@ -30,7 +33,9 @@ namespace cenisys
 class ServerLogger
 {
 public:
-    using LoggerBackend = std::function<void(std::string)>;
+    using LogFormat = std::function<void(const boost::locale::format &)>;
+    using LogMessage = std::function<void(const boost::locale::message &)>;
+    using LoggerBackend = std::tuple<LogFormat, LogMessage>;
     using BackendList = std::list<LoggerBackend>;
     using RegisteredLoggerBackend = BackendList::const_iterator;
 
@@ -40,7 +45,7 @@ public:
     //! \brief Log some text to the server log.
     //! \param content The content in string. May contain color codes.
     //!
-    virtual void log(const std::string &content) = 0;
+    virtual void log(const boost::locale::format &content) = 0;
 
     //!
     //! \brief Register a logger backend.

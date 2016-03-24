@@ -19,6 +19,12 @@
  */
 #include <functional>
 #include <mutex>
+#include <iostream>
+#include <locale>
+#include <boost/locale/format.hpp>
+#include <boost/locale/generator.hpp>
+#include <boost/locale/message.hpp>
+#include "config.h"
 #include "server/cenisysserver.h"
 
 namespace cenisys
@@ -26,10 +32,21 @@ namespace cenisys
 
 CenisysServer::CenisysServer() : _termSignals(_ioService, SIGINT, SIGTERM)
 {
+    _localeGen.add_messages_path(PACKAGE_LOCALE_DIR);
+    _localeGen.set_default_messages_domain(GETTEXT_PACKAGE);
+    std::locale::global(_localeGen(""));
+    _oldCoutLoc = std::cout.imbue(std::locale());
+    std::cout << boost::locale::format(
+                     boost::locale::translate("Staring Cenisys version {1}")) %
+                     SERVER_VERSION
+              << std::endl;
 }
 
 CenisysServer::~CenisysServer()
 {
+    std::cout << boost::locale::translate("Cenisys successfully stopped")
+              << std::endl;
+    std::cout.imbue(_oldCoutLoc);
 }
 
 int CenisysServer::run()
@@ -41,7 +58,12 @@ int CenisysServer::run()
 
 void CenisysServer::terminate()
 {
-    std::call_once(_stopFlag,std::bind(&CenisysServer::stop,this));
+    std::call_once(_stopFlag, std::bind(&CenisysServer::stop, this));
+}
+
+std::locale CenisysServer::getLocale(std::string locale)
+{
+    return _localeGen(locale);
 }
 
 bool CenisysServer::dispatchCommand(std::string command)
@@ -49,7 +71,9 @@ bool CenisysServer::dispatchCommand(std::string command)
     for(Server::CommandHandler &handler : _commandList)
         if(handler(command))
             return true;
-    _logger.log("Unknown command " + command);
+    _logger.log(
+        boost::locale::format(boost::locale::translate("Unknown command {1}")) %
+        command);
     return false;
 }
 
@@ -74,16 +98,30 @@ ServerLogger &CenisysServer::getLogger()
 
 void CenisysServer::start()
 {
-    _ioService.post([this]{ _stdoutLogger = std::make_unique<StdoutLogger>(*this, _ioService);});
-    _ioService.post([this]{ _stdinReader = std::make_unique<StdinReader>(*this, _ioService);});
+    _ioService.post([this]
+                    {
+                        _stdoutLogger =
+                            std::make_unique<StdoutLogger>(*this, _ioService);
+                    });
+    _ioService.post([this]
+                    {
+                        _stdinReader =
+                            std::make_unique<StdinReader>(*this, _ioService);
+                    });
     _termSignals.async_wait(std::bind(&Server::terminate, this));
 }
 
 void CenisysServer::stop()
 {
     _termSignals.cancel();
-    _ioService.post([this]{_stdinReader.reset();});
-    _ioService.post([this]{_stdoutLogger.reset();});
+    _ioService.post([this]
+                    {
+                        _stdinReader.reset();
+                    });
+    _ioService.post([this]
+                    {
+                        _stdoutLogger.reset();
+                    });
 }
 
 } // namespace cenisys

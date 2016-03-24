@@ -27,6 +27,11 @@
 *.out
 *.app
 
+# Gettext
+*.pot
+*.po
+*.mo
+
 # Qt-es
 /.qmake.cache
 /.qmake.stash

@@ -33,7 +33,8 @@ public:
     CenisysServerLogger();
     ~CenisysServerLogger();
 
-    void log(const std::string &content);
+    void log(const boost::locale::format &content);
+    void log(const boost::locale::message &content);
 
     RegisteredLoggerBackend registerBackend(LoggerBackend backend);
     void unregisterBackend(RegisteredLoggerBackend handle);

@@ -1,0 +1,8 @@
+// Version
+#define SERVER_VERSION "${PROJECT_VERSION}"
+
+// Gettext domain
+#define GETTEXT_PACKAGE "${GETTEXT_PACKAGE}"
+
+// Localization directory
+#define PACKAGE_LOCALE_DIR "${PACKAGE_LOCALE_DIR}"

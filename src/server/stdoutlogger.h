@@ -21,10 +21,13 @@
 #define CENISYS_STDOUTLOGGER_H
 
 #include <condition_variable>
+#include <locale>
 #include <mutex>
 #include <queue>
 #include <thread>
 #include <boost/asio/io_service.hpp>
+#include <boost/locale/format.hpp>
+#include <boost/locale/message.hpp>
 #include "server/server.h"
 
 namespace cenisys
@@ -37,10 +40,12 @@ public:
     ~StdoutLogger();
 
 private:
-    void log(const std::string &content);
+    void log(const boost::locale::format &content);
+    void log(const boost::locale::message &content);
     void asyncWorker();
 
     Server &_server;
+    std::locale _locale;
     boost::asio::io_service &_ioService;
     ServerLogger::RegisteredLoggerBackend _backendHandle;
     bool _running;

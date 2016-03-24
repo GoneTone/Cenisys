@@ -31,6 +31,13 @@ License
 
 Cenisys is licensed under GPLv3. Plugins must be licensed under a compatible license.
 
+Translations
+------------
+
+Join our translation project on Zanata_! Your help is appreciated.
+
+.. _Zanata: https://translate.zanata.org/project/view/cenisys
+
 Special Thanks
 --------------
 

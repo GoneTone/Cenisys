@@ -17,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <boost/locale/format.hpp>
+#include <boost/locale/message.hpp>
 #include "server/cenisysserverlogger.h"
 
 namespace cenisys
@@ -30,13 +32,18 @@ CenisysServerLogger::~CenisysServerLogger()
 {
 }
 
-void CenisysServerLogger::log(const std::string &content)
+void CenisysServerLogger::log(const boost::locale::format &content)
 {
     std::lock_guard<std::mutex> lock(_backendListLock);
     for(ServerLogger::LoggerBackend backend : _backends)
-    {
-        backend(content);
-    }
+        std::get<ServerLogger::LogFormat>(backend)(content);
+}
+
+void CenisysServerLogger::log(const boost::locale::message &content)
+{
+    std::lock_guard<std::mutex> lock(_backendListLock);
+    for(ServerLogger::LoggerBackend backend : _backends)
+        std::get<ServerLogger::LogMessage>(backend)(content);
 }
 
 ServerLogger::RegisteredLoggerBackend

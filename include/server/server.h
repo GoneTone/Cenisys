@@ -22,6 +22,7 @@
 
 #include <functional>
 #include <list>
+#include <locale>
 #include <string>
 #include "server/serverlogger.h"
 
@@ -51,6 +52,8 @@ public:
     //! \brief Stop the server. Must be called from the server thread.
     //!
     virtual void terminate() = 0;
+
+    virtual std::locale getLocale(std::string locale) = 0;
 
     //!
     //! \brief Process a command.

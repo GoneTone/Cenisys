@@ -20,10 +20,12 @@
 #ifndef CENISYS_CENISYSSERVER_H
 #define CENISYS_CENISYSSERVER_H
 
+#include <locale>
 #include <memory>
 #include <mutex>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/signal_set.hpp>
+#include <boost/locale/generator.hpp>
 #include "server/server.h"
 #include "server/cenisysserverlogger.h"
 #include "server/stdinreader.h"
@@ -41,6 +43,8 @@ public:
     int run();
     void terminate();
 
+    std::locale getLocale(std::string locale);
+
     bool dispatchCommand(std::string command);
 
     RegisteredCommandHandler registerCommand(CommandHandler handler);
@@ -53,6 +57,8 @@ private:
     void stop();
 
     std::once_flag _stopFlag;
+    std::locale _oldCoutLoc;
+    boost::locale::generator _localeGen;
     boost::asio::io_service _ioService;
     boost::asio::signal_set _termSignals;
     CommandHandlerList _commandList;
@@ -60,7 +66,6 @@ private:
     CenisysServerLogger _logger;
     std::unique_ptr<StdinReader> _stdinReader;
     std::unique_ptr<StdoutLogger> _stdoutLogger;
-
 };
 
 } // namespace cenisys
