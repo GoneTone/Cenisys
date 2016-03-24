@@ -18,7 +18,6 @@
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <iostream>
-#include <sstream>
 #include <boost/locale/format.hpp>
 #include <boost/locale/message.hpp>
 #include "server/stdoutlogger.h"
@@ -52,20 +51,16 @@ StdoutLogger::~StdoutLogger()
 
 void StdoutLogger::log(const boost::locale::format &content)
 {
-    std::stringstream ss;
-    ss << content;
     std::unique_lock<std::mutex> lock(_writeQueueLock);
-    _writeQueue.push(ss.str());
+    _writeQueue.push(content.str());
     lock.unlock();
     _queueNotifier.notify_one();
 }
 
 void StdoutLogger::log(const boost::locale::message &content)
 {
-    std::stringstream ss;
-    ss << content;
     std::unique_lock<std::mutex> lock(_writeQueueLock);
-    _writeQueue.push(ss.str());
+    _writeQueue.push(content.str());
     lock.unlock();
     _queueNotifier.notify_one();
 }
