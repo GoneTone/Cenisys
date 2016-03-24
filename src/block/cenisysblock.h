@@ -30,32 +30,32 @@ class CenisysBlock : public Block
 {
 public:
     CenisysBlock(const Location &location,
-                 std::unique_ptr<BlockMaterial> &material, std::mutex &mutex,
-                 char &skyLight, char &blockLight);
+                 std::shared_ptr<BlockMaterial> material, std::mutex &mutex,
+                 unsigned char &skyLight, unsigned char &blockLight);
     ~CenisysBlock();
 
     const BlockMaterial &getMaterial() const;
     BlockMaterial &getMaterial();
     void setMaterial(BlockMaterial *material, bool updatePhysics = true);
-    void setMaterial(std::unique_ptr<BlockMaterial> &&material,
+    void setMaterial(std::shared_ptr<BlockMaterial> material,
                      bool updatePhysics = true);
     std::shared_ptr<World> getWorld() const;
     std::unique_ptr<Block> getRelative(const BlockFace &face) const;
     std::unique_ptr<Block> getRelative(int modX, int modY, int modZ) const;
 
     const Location &getLocation() const;
-    char getSkyLight() const;
-    char getBlockLight() const;
-    char getLightLevel() const;
+    unsigned char getSkyLight() const;
+    unsigned char getBlockLight() const;
+    unsigned char getLightLevel() const;
 
     bool blockUpdate();
 
 private:
-    std::unique_ptr<BlockMaterial> &_material;
+    std::shared_ptr<BlockMaterial> _material;
     std::mutex &_mutex;
     const Location _location;
-    char &_skyLight;
-    char &_blockLight;
+    unsigned char &_skyLight;
+    unsigned char &_blockLight;
 };
 
 } // namespace cenisys

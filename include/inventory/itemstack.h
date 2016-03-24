@@ -31,7 +31,7 @@ class ItemStack
 {
 public:
     explicit ItemStack(ItemMaterial *material, int amount = 1);
-    explicit ItemStack(std::unique_ptr<ItemMaterial> &&material,
+    explicit ItemStack(std::shared_ptr<cenisys::ItemMaterial> material,
                        int amount = 1);
     ItemStack(const ItemStack &other);
     ~ItemStack();
@@ -44,11 +44,11 @@ public:
     const ItemMaterial &getMaterial() const;
     ItemMaterial &getMaterial();
     void setMaterial(ItemMaterial *material);
-    void setMaterial(std::unique_ptr<ItemMaterial> &&material);
+    void setMaterial(std::shared_ptr<cenisys::ItemMaterial> material);
 
 private:
+    std::shared_ptr<ItemMaterial> _material;
     int _amount;
-    std::unique_ptr<ItemMaterial> _material;
 };
 
 } // namespace cenisys

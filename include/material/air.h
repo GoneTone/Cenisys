@@ -21,11 +21,12 @@
 #define CENISYS_AIR_H
 
 #include "material/material.h"
+#include "material/cowmaterial.h"
 
 namespace cenisys
 {
 
-class Air : public BlockMaterial, ItemMaterial
+class Air : public BlockMaterial, public ItemMaterial, public CoWMaterial<Air>
 {
 public:
     Air();
@@ -37,12 +38,13 @@ public:
     int getMaxStackSize() const;
 
     std::vector<ItemStack> getDrops(const ItemStack &tool) const;
-    bool canAbsorb();
-    bool canOverride();
+    bool canAbsorb() const;
+    bool canOverride() const;
     bool canPlaceAt(const Block &target, const BlockFace &face) const;
     void placeBlock(Player &player, Block &target, const BlockFace &face,
-                    const Vector &clickedLoc);
-    void destroyBlock(Player &player, Block &target, const BlockFace &face);
+                    const Vector &clickedLoc) const;
+    void destroyBlock(Player &player, Block &target,
+                      const BlockFace &face) const;
 };
 
 } // namespace cenisys

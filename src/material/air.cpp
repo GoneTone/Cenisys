@@ -51,12 +51,12 @@ std::vector<ItemStack> Air::getDrops(const ItemStack &tool) const
     return {};
 }
 
-bool Air::canAbsorb()
+bool Air::canAbsorb() const
 {
     // TODO: throw
 }
 
-bool Air::canOverride()
+bool Air::canOverride() const
 {
     return true;
 }
@@ -67,12 +67,13 @@ bool Air::canPlaceAt(const Block &target, const BlockFace &face) const
 }
 
 void Air::placeBlock(Player &player, Block &target, const BlockFace &face,
-                     const Vector &clickedLoc)
+                     const Vector &clickedLoc) const
 {
     // TODO: throw
 }
 
-void Air::destroyBlock(Player &player, Block &target, const BlockFace &face)
+void Air::destroyBlock(Player &player, Block &target,
+                       const BlockFace &face) const
 {
     // TODO: throw
 }

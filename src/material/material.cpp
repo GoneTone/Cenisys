@@ -31,18 +31,26 @@ int ItemMaterial::getMaxStackSize() const
     return 64;
 }
 
-void ItemMaterial::rightClickAir(Player &player, ItemStack &holding)
+void ItemMaterial::rightClickAir(Player &player, ItemStack &holding) const
 {
     // Do nothing by default
 }
 
 void ItemMaterial::rightClickBlock(Player &player, Block &target,
                                    const BlockFace &face, ItemStack &holding,
-                                   const Vector &clickedLoc)
+                                   const Vector &clickedLoc) const
 {
-    if(BlockMaterial *block = dynamic_cast<BlockMaterial *>(this))
+    if(const BlockMaterial *block = dynamic_cast<const BlockMaterial *>(this))
     {
-        block->placeBlock(player, target, face, clickedLoc);
+        std::unique_ptr<Block> relative = target.getRelative(face);
+        Block &targetPlace =
+            target.getMaterial().canAbsorb() ? target : *relative;
+        bool canBuild = block->canPlaceAt(targetPlace, face);
+        // Todo: Events
+        if(!canBuild)
+            return;
+        block->placeBlock(player, targetPlace, face, clickedLoc);
+        holding.setAmount(holding.getAmount() - 1);
     }
     else
     {
@@ -54,7 +62,8 @@ std::vector<ItemStack> BlockMaterial::getDrops(const ItemStack &tool) const
 {
     if(const ItemMaterial *drop = dynamic_cast<const ItemMaterial *>(this))
     {
-        return {ItemStack(drop->clone())};
+        return {
+            ItemStack(const_cast<ItemMaterial *>(drop)->shared_from_this())};
     }
     else
     {
@@ -62,12 +71,12 @@ std::vector<ItemStack> BlockMaterial::getDrops(const ItemStack &tool) const
     }
 }
 
-bool BlockMaterial::canAbsorb()
+bool BlockMaterial::canAbsorb() const
 {
     return false;
 }
 
-bool BlockMaterial::canOverride()
+bool BlockMaterial::canOverride() const
 {
     return false;
 }
@@ -78,27 +87,29 @@ bool BlockMaterial::canPlaceAt(const Block &target, const BlockFace &face) const
 }
 
 void BlockMaterial::placeBlock(Player &player, Block &target,
-                               const BlockFace &face, const Vector &clickedLoc)
+                               const BlockFace &face,
+                               const Vector &clickedLoc) const
 {
-    target.setMaterial(clone());
+    // Casting away const: CoW won't write to this if properly implemented
+    target.setMaterial(const_cast<BlockMaterial *>(this)->shared_from_this());
 }
 
 bool BlockMaterial::blockInteract(Player &player, Block &target,
                                   const BlockFace &face,
-                                  const Vector &clickedLoc)
+                                  const Vector &clickedLoc) const
 {
     return false;
 }
 
 void BlockMaterial::destroyBlock(Player &player, Block &target,
-                                 const BlockFace &face)
+                                 const BlockFace &face) const
 {
     // Beware: The following line commits suicide, the behavior is well-defined
-    // only if it's the last line
-    target.setMaterial(new Air);
+    // only when it's the last line
+    target.setMaterial(Air::getDefaultPtr());
 }
 
-bool BlockMaterial::blockUpdate(Block &target)
+bool BlockMaterial::blockUpdate(Block &target) const
 {
     return false;
 }

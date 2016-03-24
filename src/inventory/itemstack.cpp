@@ -24,17 +24,17 @@ namespace cenisys
 {
 
 ItemStack::ItemStack(ItemMaterial *material, int amount)
-    : ItemStack(std::unique_ptr<ItemMaterial>(material), amount)
+    : ItemStack(std::shared_ptr<ItemMaterial>(material), amount)
 {
 }
 
-ItemStack::ItemStack(std::unique_ptr<ItemMaterial> &&material, int amount)
+ItemStack::ItemStack(std::shared_ptr<ItemMaterial> material, int amount)
     : _amount(amount), _material(std::move(material))
 {
 }
 
 ItemStack::ItemStack(const ItemStack &other)
-    : ItemStack(other._material->clone(), other._amount)
+    : _material(other._material), _amount(other._amount)
 {
 }
 
@@ -44,7 +44,7 @@ ItemStack::~ItemStack()
 
 ItemStack &ItemStack::operator=(const ItemStack &other)
 {
-    _material = std::unique_ptr<ItemMaterial>(other._material->clone());
+    _material = other._material;
     _amount = other._amount;
     return *this;
 }
@@ -66,15 +66,20 @@ const ItemMaterial &ItemStack::getMaterial() const
 
 ItemMaterial &ItemStack::getMaterial()
 {
+    // Copy-on-Write
+    if(!_material.unique())
+    {
+        _material = std::shared_ptr<ItemMaterial>(_material->clone());
+    }
     return *_material;
 }
 
 void ItemStack::setMaterial(ItemMaterial *material)
 {
-    setMaterial(std::unique_ptr<ItemMaterial>(material));
+    setMaterial(std::shared_ptr<ItemMaterial>(material));
 }
 
-void ItemStack::setMaterial(std::unique_ptr<ItemMaterial> &&material)
+void ItemStack::setMaterial(std::shared_ptr<ItemMaterial> material)
 {
     _material = std::move(material);
 }

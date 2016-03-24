@@ -1,5 +1,5 @@
 /*
- * Interface represents a chunk.
+ * Copy-on-Write material implementation.
  * Copyright (C) 2016 iTX Technologies
  *
  * This file is part of Cenisys.
@@ -17,31 +17,26 @@
  * You should have received a copy of the GNU General Public License
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CENISYS_CHUNK_H
-#define CENISYS_CHUNK_H
+#ifndef CENISYS_COWMATERIAL_H
+#define CENISYS_COWMATERIAL_H
 
 #include <memory>
 
 namespace cenisys
 {
 
-class World;
-class Block;
-
-class Chunk
+template <typename T>
+class CoWMaterial
 {
 public:
-    virtual ~Chunk() = default;
-    virtual std::shared_ptr<World> getWorld() const = 0;
-    virtual std::unique_ptr<const Block>
-    getBlock(unsigned int x, unsigned int y, unsigned int z) const = 0;
-    virtual std::unique_ptr<Block> getBlock(unsigned int x, unsigned int y,
-                                            unsigned int z) = 0;
-
-    virtual int getX() const = 0;
-    virtual int getZ() const = 0;
+    static constexpr std::shared_ptr<T> getDefaultPtr() { return _default; }
+private:
+    static const std::shared_ptr<T> _default;
 };
+
+template <typename T>
+const std::shared_ptr<T> CoWMaterial<T>::_default = std::make_shared<T>();
 
 } // namespace cenisys
 
-#endif // CENISYS_CHUNK_H
+#endif // CENISYS_COWMATERIAL_H

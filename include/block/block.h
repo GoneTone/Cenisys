@@ -43,7 +43,7 @@ public:
     virtual BlockMaterial &getMaterial() = 0;
     virtual void setMaterial(BlockMaterial *material,
                              bool updatePhysics = true) = 0;
-    virtual void setMaterial(std::unique_ptr<BlockMaterial> &&material,
+    virtual void setMaterial(std::shared_ptr<BlockMaterial> material,
                              bool updatePhysics = true) = 0;
 
     virtual const Location &getLocation() const = 0;
@@ -52,9 +52,9 @@ public:
     virtual std::unique_ptr<Block> getRelative(int modX, int modY,
                                                int modZ) const = 0;
 
-    virtual char getSkyLight() const = 0;
-    virtual char getBlockLight() const = 0;
-    virtual char getLightLevel() const = 0;
+    virtual unsigned char getSkyLight() const = 0;
+    virtual unsigned char getBlockLight() const = 0;
+    virtual unsigned char getLightLevel() const = 0;
 
     virtual bool blockUpdate() = 0;
 

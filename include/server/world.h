@@ -33,8 +33,8 @@ class World
 public:
     virtual ~World() = default;
 
-    virtual std::unique_ptr<Block> getBlockAt(int x, int y, int z) = 0;
-    virtual std::shared_ptr<Chunk> getChunkAt(int x, int z) = 0;
+    virtual std::unique_ptr<Block> getBlockAt(int x, unsigned int y, int z) = 0;
+    virtual std::shared_ptr<Chunk> getChunkAt(int x, unsigned int z) = 0;
 };
 
 } // namespace cenisys

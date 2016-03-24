@@ -21,6 +21,7 @@
 #define CENISYS_MATERIAL_H
 
 #include <string>
+#include <memory>
 #include <vector>
 
 namespace cenisys
@@ -43,24 +44,26 @@ public:
     virtual std::string getName() const = 0;
 };
 
-class ItemMaterial : virtual Material
+class ItemMaterial : public virtual Material,
+                     public std::enable_shared_from_this<ItemMaterial>
 {
 public:
     virtual ItemMaterial *clone() const = 0;
     virtual int getMaxStackSize() const;
-    virtual void rightClickAir(Player &player, ItemStack &holding);
+    virtual void rightClickAir(Player &player, ItemStack &holding) const;
     virtual void rightClickBlock(Player &player, Block &target,
                                  const BlockFace &face, ItemStack &holding,
-                                 const Vector &clickedLoc);
+                                 const Vector &clickedLoc) const;
 };
 
-class BlockMaterial : virtual Material
+class BlockMaterial : public virtual Material,
+                      public std::enable_shared_from_this<BlockMaterial>
 {
 public:
     virtual BlockMaterial *clone() const = 0;
     virtual std::vector<ItemStack> getDrops(const ItemStack &tool) const;
-    virtual bool canAbsorb();
-    virtual bool canOverride();
+    virtual bool canAbsorb() const;
+    virtual bool canOverride() const;
     virtual bool canPlaceAt(const Block &target, const BlockFace &face) const;
     //!
     //! \brief placeBlock Place a block, set target to the material.
@@ -71,7 +74,8 @@ public:
     //! tried to place against.
     //!
     virtual void placeBlock(Player &player, Block &target,
-                            const BlockFace &face, const Vector &clickedLoc);
+                            const BlockFace &face,
+                            const Vector &clickedLoc) const;
     //!
     //! \brief blockInteract Interact with a block.
     //! \param player The player did the action.
@@ -82,7 +86,8 @@ public:
     //! \return Whether the interaction occured.
     //!
     virtual bool blockInteract(Player &player, Block &target,
-                               const BlockFace &face, const Vector &clickedLoc);
+                               const BlockFace &face,
+                               const Vector &clickedLoc) const;
     //!
     //! \brief destroyBlock Break the block, set target to air.
     //! \param player The player destroyed the block.
@@ -90,8 +95,8 @@ public:
     //! \param face The face of the block which player's cursor is on.
     //!
     virtual void destroyBlock(Player &player, Block &target,
-                              const BlockFace &face);
-    virtual bool blockUpdate(Block &target);
+                              const BlockFace &face) const;
+    virtual bool blockUpdate(Block &target) const;
 };
 
 } // namespace cenisys

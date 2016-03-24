@@ -27,8 +27,9 @@ namespace cenisys
 {
 
 CenisysBlock::CenisysBlock(const Location &location,
-                           std::unique_ptr<BlockMaterial> &material,
-                           std::mutex &mutex, char &skyLight, char &blockLight)
+                           std::shared_ptr<BlockMaterial> material,
+                           std::mutex &mutex, unsigned char &skyLight,
+                           unsigned char &blockLight)
     : _material(material), _mutex(mutex), _location(location),
       _skyLight(skyLight), _blockLight(blockLight)
 {
@@ -52,17 +53,17 @@ BlockMaterial &CenisysBlock::getMaterial()
 
 void CenisysBlock::setMaterial(BlockMaterial *material, bool updatePhysics)
 {
-    setMaterial(std::unique_ptr<BlockMaterial>(material), updatePhysics);
+    setMaterial(std::shared_ptr<BlockMaterial>(material), updatePhysics);
 }
 
-void CenisysBlock::setMaterial(std::unique_ptr<BlockMaterial> &&material,
+void CenisysBlock::setMaterial(std::shared_ptr<BlockMaterial> material,
                                bool updatePhysics)
 {
     if(!material)
     {
         // TODO: throw
     }
-    std::unique_ptr<BlockMaterial> oldMaterial = std::move(_material);
+    std::shared_ptr<BlockMaterial> oldMaterial = std::move(_material);
     _material = std::move(material);
     if(updatePhysics)
     {
@@ -87,7 +88,8 @@ std::unique_ptr<Block> CenisysBlock::getRelative(int modX, int modY,
                                                  int modZ) const
 {
     return getWorld()->getBlockAt(static_cast<int>(_location.getX()) + modX,
-                                  static_cast<int>(_location.getY()) + modY,
+                                  static_cast<unsigned int>(_location.getY()) +
+                                      modY,
                                   static_cast<int>(_location.getZ()) + modZ);
 }
 
@@ -96,17 +98,17 @@ const Location &CenisysBlock::getLocation() const
     return _location;
 }
 
-char CenisysBlock::getSkyLight() const
+unsigned char CenisysBlock::getSkyLight() const
 {
     return _skyLight;
 }
 
-char CenisysBlock::getBlockLight() const
+unsigned char CenisysBlock::getBlockLight() const
 {
     return _blockLight;
 }
 
-char CenisysBlock::getLightLevel() const
+unsigned char CenisysBlock::getLightLevel() const
 {
     return std::max(_skyLight, _blockLight);
 }
