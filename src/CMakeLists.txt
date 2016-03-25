@@ -9,12 +9,11 @@ add_library(cenisys SHARED
     server/cenisysserverlogger.cpp
     server/stdinreader.cpp
     server/stdoutlogger.cpp)
-target_include_directories(cenisys PUBLIC
-    ${Boost_INCLUDE_DIRS})
 target_link_libraries(cenisys PUBLIC
     Threads::Threads
-    ${Boost_SYSTEM_LIBRARY}
-    ${Boost_LOCALE_LIBRARY})
+    Boost::boost
+    Boost::system
+    Boost::locale)
 add_executable(cenisyslauncher main.cpp)
 target_link_libraries(cenisyslauncher PUBLIC cenisys)
 set_property(TARGET cenisyslauncher cenisys PROPERTY CXX_STANDARD 14)
