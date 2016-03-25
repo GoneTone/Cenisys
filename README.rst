@@ -1,6 +1,10 @@
 Cenisys
 =======
 
+.. image:: https://gitlab.com/itxtech/cenisys/badges/master/build.svg
+   :alt: GitLab CI
+   :target: https://gitlab.com/itxtech/genisys/builds
+
 Canonical source
 ----------------
 
