@@ -30,6 +30,7 @@
 #include "server/cenisysserverlogger.h"
 #include "server/stdinreader.h"
 #include "server/stdoutlogger.h"
+#include "command/defaultcommandhandlers.h"
 
 namespace cenisys
 {
@@ -66,6 +67,7 @@ private:
     CenisysServerLogger _logger;
     std::unique_ptr<StdinReader> _stdinReader;
     std::unique_ptr<StdoutLogger> _stdoutLogger;
+    std::unique_ptr<DefaultCommandHandlers> _defaultCommands;
 };
 
 } // namespace cenisys

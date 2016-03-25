@@ -108,12 +108,21 @@ void CenisysServer::start()
                         _stdinReader =
                             std::make_unique<StdinReader>(*this, _ioService);
                     });
+    _ioService.post([this]
+                    {
+                        _defaultCommands =
+                            std::make_unique<DefaultCommandHandlers>(*this);
+                    });
     _termSignals.async_wait(std::bind(&Server::terminate, this));
 }
 
 void CenisysServer::stop()
 {
     _termSignals.cancel();
+    _ioService.post([this]
+                    {
+                        _defaultCommands.reset();
+                    });
     _ioService.post([this]
                     {
                         _stdinReader.reset();

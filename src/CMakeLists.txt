@@ -5,6 +5,7 @@ include_directories("${PROJECT_SOURCE_DIR}/include")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 configure_file(config.h.in config.h)
 add_library(cenisys SHARED
+    command/defaultcommandhandlers.cpp
     server/cenisysserver.cpp
     server/cenisysserverlogger.cpp
     server/stdinreader.cpp
