@@ -21,7 +21,7 @@
 #define CENISYS_SERVER_H
 
 #include <functional>
-#include <list>
+#include <forward_list>
 #include <locale>
 #include <string>
 #include "server/serverlogger.h"
@@ -36,7 +36,7 @@ class Server
 {
 public:
     using CommandHandler = std::function<bool(const std::string &)>;
-    using CommandHandlerList = std::list<CommandHandler>;
+    using CommandHandlerList = std::forward_list<CommandHandler>;
     using RegisteredCommandHandler = CommandHandlerList::const_iterator;
 
     virtual ~Server() = default;

@@ -50,15 +50,15 @@ ServerLogger::RegisteredLoggerBackend
 CenisysServerLogger::registerBackend(ServerLogger::LoggerBackend backend)
 {
     std::lock_guard<std::mutex> lock(_backendListLock);
-    _backends.push_back(backend);
-    return std::prev(_backends.end());
+    _backends.push_front(backend);
+    return _backends.before_begin();
 }
 
 void CenisysServerLogger::unregisterBackend(
     ServerLogger::RegisteredLoggerBackend handle)
 {
     std::lock_guard<std::mutex> lock(_backendListLock);
-    _backends.erase(handle);
+    _backends.erase_after(handle);
 }
 
 } // namespace cenisys

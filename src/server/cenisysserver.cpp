@@ -81,14 +81,14 @@ Server::RegisteredCommandHandler
 CenisysServer::registerCommand(Server::CommandHandler handler)
 {
     std::lock_guard<std::mutex> lock(_registerCommandLock);
-    _commandList.push_back(handler);
-    return std::prev(_commandList.end());
+    _commandList.push_front(handler);
+    return _commandList.before_begin();
 }
 
 void CenisysServer::unregisterCommand(Server::RegisteredCommandHandler handle)
 {
     std::lock_guard<std::mutex> lock(_registerCommandLock);
-    _commandList.erase(handle);
+    _commandList.erase_after(handle);
 }
 
 ServerLogger &CenisysServer::getLogger()

@@ -21,7 +21,7 @@
 #define CENISYS_SERVERLOGGER_H
 
 #include <functional>
-#include <list>
+#include <forward_list>
 #include <string>
 #include <tuple>
 #include <boost/locale/format.hpp>
@@ -36,7 +36,7 @@ public:
     using LogFormat = std::function<void(const boost::locale::format &)>;
     using LogMessage = std::function<void(const boost::locale::message &)>;
     using LoggerBackend = std::tuple<LogFormat, LogMessage>;
-    using BackendList = std::list<LoggerBackend>;
+    using BackendList = std::forward_list<LoggerBackend>;
     using RegisteredLoggerBackend = BackendList::const_iterator;
 
     virtual ~ServerLogger() = default;
