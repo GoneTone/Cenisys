@@ -19,6 +19,7 @@
  */
 #include <functional>
 #include <iostream>
+#include <boost/locale/message.hpp>
 #include "server/stdinreader.h"
 
 namespace cenisys
@@ -34,7 +35,10 @@ StdinReader::~StdinReader()
 {
     _running = false;
     if(std::cin)
-        std::cerr << "Please press Enter to continue..." << std::endl;
+        std::cerr << boost::locale::translate(
+                         "Please press Enter to continue...")
+                         .str()
+                  << std::endl;
     _asyncThread.join();
 }
 
