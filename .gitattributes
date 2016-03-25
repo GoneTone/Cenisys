@@ -1,1 +1,2 @@
 *.po    diff=po
+**/CMakeLists.txt merge=union
