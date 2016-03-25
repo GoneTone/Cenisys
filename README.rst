@@ -22,7 +22,7 @@ Requirements
 
 Cenisys utilizes bleeding-edge features, and we uses some library in development branch:
 
-- Boost 1.61 (currently in git)
+- Boost 1.61 (currently in RC)
 
 Cenisys uses C++14. GCC and clang is supported. MSVC isn't recommended since it lacks new standard support.
 
