@@ -30,8 +30,9 @@ class CenisysBlock : public Block
 {
 public:
     CenisysBlock(const Location &location,
-                 std::shared_ptr<BlockMaterial> material, std::mutex &mutex,
-                 unsigned char &skyLight, unsigned char &blockLight);
+                 std::shared_ptr<cenisys::BlockMaterial> &material,
+                 std::mutex &mutex, unsigned char &skyLight,
+                 unsigned char &blockLight);
     ~CenisysBlock();
 
     const BlockMaterial &getMaterial() const;

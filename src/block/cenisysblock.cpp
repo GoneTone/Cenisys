@@ -27,13 +27,12 @@ namespace cenisys
 {
 
 CenisysBlock::CenisysBlock(const Location &location,
-                           std::shared_ptr<BlockMaterial> material,
+                           std::shared_ptr<BlockMaterial> &material,
                            std::mutex &mutex, unsigned char &skyLight,
                            unsigned char &blockLight)
     : _material(material), _mutex(mutex), _location(location),
       _skyLight(skyLight), _blockLight(blockLight)
 {
-    _mutex.lock();
 }
 
 CenisysBlock::~CenisysBlock()
