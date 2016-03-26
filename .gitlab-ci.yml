@@ -33,6 +33,7 @@ zanata_upload:
   dependencies:
    - build:linux
   script:
+   - find src -name "*.cpp" | xgettext -ktranslate:1,1t -ktranslate:1,2,3t -C --boost -f- -o po/cenisys.pot --copyright-holder="iTX Technologies" --package-name=Cenisys
    - zanata-cli -B push --url $ZANATA_URL --username $ZANATA_USERNAME --key $ZANATA_KEY
   only:
    - master
