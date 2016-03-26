@@ -19,8 +19,10 @@ build:linux:
    - DESTDIR=.. ninja-build install
   cache:
     key: "$CI_BUILD_NAME/$CI_BUILD_REF_NAME"
+    untracked: true
     paths:
      - build/
+     - po/
   artifacts:
     name: "cenisys-linux-$CI_BUILD_REF"
     paths:
