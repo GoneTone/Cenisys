@@ -9,16 +9,19 @@ add_library(cenisys SHARED
     server/cenisysserver.cpp
     server/cenisysserverlogger.cpp
     server/stdinreader.cpp
-    server/stdoutlogger.cpp)
+    server/stdoutlogger.cpp
+    )
 target_link_libraries(cenisys PUBLIC
     Threads::Threads
     Boost::boost
     Boost::system
-    Boost::locale)
+    Boost::locale
+    )
 add_executable(cenisyslauncher main.cpp)
 target_link_libraries(cenisyslauncher PUBLIC cenisys)
 set_property(TARGET cenisyslauncher cenisys PROPERTY CXX_STANDARD 14)
 set_property(TARGET cenisyslauncher cenisys PROPERTY CXX_STANDARD_REQUIRED YES)
 install(TARGETS cenisys cenisyslauncher
     RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib)
+    LIBRARY DESTINATION lib
+    )
