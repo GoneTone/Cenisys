@@ -1,10 +1,17 @@
+image: itxtech/docker-env-cenisys
+
+variables:
+  ZANATA_URL: https://translate.zanata.org/
+  ZANATA_USERNAME: ishitatsuyuki
+
 stages:
  - build
- 
-compile:
-  image: itxtech/docker-env-cenisys
+ - deploy
+
+build:linux:
   stage: build
   script:
+   - zanata-cli pull -B --create-skeletons
    - mkdir -p build
    - cd build
    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
@@ -14,5 +21,26 @@ compile:
     paths:
      - build/
   artifacts:
+    name: "cenisys-linux-$CI_BUILD_REF"
     paths:
      - usr/
+
+zanata_upload:
+  stage: deploy
+  script:
+   - find src -name "*.cpp" | xgettext -ktranslate:1,1t -ktranslate:1,2,3t -C --boost -f- -o po/cenisys.pot --copyright-holder="iTX Technologies" --package-name=Cenisys
+   - zanata-cli push -B --url $ZANATA_URL --username $ZANATA_USERNAME --key $ZANATA_KEY
+  only:
+   - master
+
+pages:
+  stage: deploy
+  dependencies:
+   - build:linux
+  script:
+   - cp -r usr/share/doc/cenisys/html/ public
+  artifacts:
+    paths:
+     - public/
+  only:
+   - master
