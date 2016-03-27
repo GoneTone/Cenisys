@@ -22,6 +22,6 @@ target_link_libraries(cenisyslauncher PUBLIC cenisys)
 set_property(TARGET cenisyslauncher cenisys PROPERTY CXX_STANDARD 14)
 set_property(TARGET cenisyslauncher cenisys PROPERTY CXX_STANDARD_REQUIRED YES)
 install(TARGETS cenisys cenisyslauncher
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
     )

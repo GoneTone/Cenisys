@@ -30,9 +30,8 @@ if(BUILD_DOC)
             "${DOC_SOURCE_DIR}"
             "${SPHINX_OUTPUT_DIR}"
             )
-        string(TOLOWER share/doc/${CMAKE_PROJECT_NAME} DOC_INSTALL_DIR)
         install(DIRECTORY "${SPHINX_OUTPUT_DIR}"
-            DESTINATION "${DOC_INSTALL_DIR}"
+            DESTINATION "${CMAKE_INSTALL_DOCDIR}"
             PATTERN "*/\.*" EXCLUDE)
     else()
         message(WARNING "Skipping documentation due to missing dependencies.")
