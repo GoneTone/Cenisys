@@ -28,14 +28,14 @@ build:linux:
   script:
    - mkdir -p build
    - cd build
-   - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "$CI_BUILD_REF" || echo ""` ..
+   - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
    - DESTDIR=.. ninja-build install
   cache:
     untracked: true
     paths:
      - build/
   artifacts:
-    name: "cenisys-linux-$CI_BUILD_REF"
+    name: "cenisys-linux-${CI_BUILD_REF:0:7}"
     paths:
      - usr/
 
