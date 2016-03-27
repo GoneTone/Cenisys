@@ -35,6 +35,13 @@ License
 
 Cenisys is licensed under GPLv3. Plugins must be licensed under a compatible license.
 
+Documentations
+--------------
+
+Documentations are bundled with release. You can also browse the git version on `GitLab Pages`_.
+
+.. _GitLab Pages: https://itxtech.gitlab.io/cenisys
+
 Translations
 ------------
 
