@@ -1,5 +1,10 @@
 // Version
+#cmakedefine VERSION_SUFFIX "${VERSION_SUFFIX}"
+#ifdef VERSION_SUFFIX
+#define SERVER_VERSION "${PROJECT_VERSION}-" VERSION_SUFFIX
+#else
 #define SERVER_VERSION "${PROJECT_VERSION}"
+#endif
 
 // Gettext domain
 #define GETTEXT_PACKAGE "${GETTEXT_PACKAGE}"

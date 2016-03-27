@@ -28,7 +28,7 @@ build:linux:
   script:
    - mkdir -p build
    - cd build
-   - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
+   - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "$CI_BUILD_REF" || echo ""` ..
    - DESTDIR=.. ninja-build install
   cache:
     untracked: true
