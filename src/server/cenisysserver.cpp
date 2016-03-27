@@ -37,7 +37,7 @@ CenisysServer::CenisysServer() : _termSignals(_ioService, SIGINT, SIGTERM)
     std::locale::global(_localeGen(""));
     _oldCoutLoc = std::cout.imbue(std::locale());
     std::cout << boost::locale::format(
-                     boost::locale::translate("Staring Cenisys version {1}")) %
+                     boost::locale::translate("Starting Cenisys version {1}")) %
                      SERVER_VERSION
               << std::endl;
 }
