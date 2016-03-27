@@ -5,24 +5,37 @@ variables:
   ZANATA_USERNAME: ishitatsuyuki
 
 stages:
+ - prepare
  - build
  - deploy
+
+translation_download:
+  stage: prepare
+  script:
+   - zanata-cli -B pull --create-skeletons
+   - find src -name "*.cpp" | xgettext -ktranslate:1,1t -ktranslate:1,2,3t -C --boost -f- -o po/cenisys.pot --copyright-holder="iTX Technologies" --package-name=Cenisys
+  cache:
+    untracked: true
+    paths:
+     - po/ 
+  artifacts:
+    untracked: true
+    paths:
+     - po/ 
+  only:
+   - master
 
 build:linux:
   stage: build
   script:
-   - zanata-cli -B pull --create-skeletons
-   - find src -name "*.cpp" | xgettext -ktranslate:1,1t -ktranslate:1,2,3t -C --boost -f- -o po/cenisys.pot --copyright-holder="iTX Technologies" --package-name=Cenisys
    - mkdir -p build
    - cd build
    - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr ..
    - DESTDIR=.. ninja-build install
   cache:
-    key: "$CI_BUILD_NAME/$CI_BUILD_REF_NAME"
     untracked: true
     paths:
      - build/
-     - po/
   artifacts:
     name: "cenisys-linux-$CI_BUILD_REF"
     paths:
@@ -31,7 +44,7 @@ build:linux:
 zanata_upload:
   stage: deploy
   dependencies:
-   - build:linux
+   - translation_download
   script:
    - find src -name "*.cpp" | xgettext -ktranslate:1,1t -ktranslate:1,2,3t -C --boost -f- -o po/cenisys.pot --copyright-holder="iTX Technologies" --package-name=Cenisys
    - zanata-cli -B push --url $ZANATA_URL --username $ZANATA_USERNAME --key $ZANATA_KEY
