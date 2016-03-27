@@ -18,7 +18,6 @@
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdexcept>
 #include "defaultcommandhandlers.h"
 
 namespace cenisys
@@ -41,12 +40,12 @@ DefaultCommandHandlers::~DefaultCommandHandlers()
 
 bool DefaultCommandHandlers::handleCommand(const std::string &command)
 {
-    try
+    if(_commandMap.count(command))
     {
-        _commandMap.at(command.substr(0, command.find(' ')))(command);
+        _commandMap[command.substr(0, command.find(' '))](command);
         return true;
     }
-    catch(std::out_of_range)
+    else
     {
         return false;
     }
