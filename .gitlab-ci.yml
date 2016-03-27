@@ -16,8 +16,6 @@ translation_download:
    - find src -name "*.cpp" | xgettext -ktranslate:1,1t -ktranslate:1,2,3t -C --boost -f- -o po/cenisys.pot --copyright-holder="iTX Technologies" --package-name=Cenisys
   cache:
     untracked: true
-    paths:
-     - po/ 
   artifacts:
     untracked: true
     paths:
