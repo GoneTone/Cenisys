@@ -30,14 +30,13 @@ CenisysBlock::CenisysBlock(const Location &location,
                            std::shared_ptr<BlockMaterial> &material,
                            std::mutex &mutex, unsigned char &skyLight,
                            unsigned char &blockLight)
-    : _material(material), _mutex(mutex), _location(location),
+    : _material(material), _lock(mutex), _location(location),
       _skyLight(skyLight), _blockLight(blockLight)
 {
 }
 
 CenisysBlock::~CenisysBlock()
 {
-    _mutex.unlock();
 }
 
 const BlockMaterial &CenisysBlock::getMaterial() const
@@ -47,6 +46,11 @@ const BlockMaterial &CenisysBlock::getMaterial() const
 
 BlockMaterial &CenisysBlock::getMaterial()
 {
+    // Material CopyLess/Copy-on-Write
+    if(!_material.unique())
+    {
+        _material = std::shared_ptr<BlockMaterial>(_material->clone());
+    }
     return *_material;
 }
 

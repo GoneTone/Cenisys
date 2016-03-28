@@ -48,12 +48,9 @@ CenisysChunk::getBlock(unsigned int x, unsigned int y, unsigned int z) const
     std::lock_guard<std::mutex> lock(_sectionLock);
     // Casting away const: const Block will protect us from modifying content
     const std::shared_ptr<Section> &section = _sections[y / 16];
-    std::mutex &mutex = section->getMutex(x, y % 16, z);
-    // Lock then pass: Secure the data of the section
-    mutex.lock();
     return std::make_unique<CenisysBlock>(
         Location(const_cast<CenisysChunk *>(this)->shared_from_this(), x, y, z),
-        section->getMaterial(x, y % 16, z), mutex,
+        section->getMaterial(x, y % 16, z), section->getMutex(x, y % 16, z),
         section->getSkyLight(x, y % 16, z),
         section->getBlockLight(x, y % 16, z));
 }
@@ -63,25 +60,14 @@ std::unique_ptr<Block> CenisysChunk::getBlock(unsigned int x, unsigned int y,
 {
     std::lock_guard<std::mutex> lock(_sectionLock);
     std::shared_ptr<Section> &section = _sections[y / 16];
-    std::mutex &mutex = section->getMutex(x, y % 16, z);
-    mutex.lock();
     // Section Copy-on-Write
     if(!section.unique())
     {
         section = std::make_shared<Section>(*section);
-        mutex.unlock();
-        std::mutex &newMutex = section->getMutex(x, y % 16, z);
-        newMutex.lock();
-    }
-    // Material CopyLess/Copy-on-Write
-    std::shared_ptr<BlockMaterial> &material =
-        section->getMaterial(x, y % 16, z);
-    if(!material.unique())
-    {
-        material = std::shared_ptr<BlockMaterial>(material->clone());
     }
     return std::make_unique<CenisysBlock>(Location(shared_from_this(), x, y, z),
-                                          material, mutex,
+                                          section->getMaterial(x, y % 16, z),
+                                          section->getMutex(x, y % 16, z),
                                           section->getSkyLight(x, y % 16, z),
                                           section->getBlockLight(x, y % 16, z));
 }

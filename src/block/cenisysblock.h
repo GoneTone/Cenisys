@@ -53,7 +53,7 @@ public:
 
 private:
     std::shared_ptr<BlockMaterial> _material;
-    std::mutex &_mutex;
+    std::lock_guard<std::mutex> _lock;
     const Location _location;
     unsigned char &_skyLight;
     unsigned char &_blockLight;
