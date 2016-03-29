@@ -5,6 +5,14 @@ Merge Requests are always welcome, and we appreciate any help you provided to im
 
 Please file Issues and Merge Requests on GitLab if possible. We use the GitLab flow to manage the development.
 
+Trying to find a work?
+----------------------
+
+Here are some easy work recommendations:
+
+- Completing source documentation
+- Find a issue to fix, possibly with low weight
+
 Issues
 ------
 
