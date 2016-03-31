@@ -12,6 +12,8 @@ Here are some easy work recommendations:
 
 - Completing source documentation
 - Find a issue to fix, possibly with low weight
+- Work on a TODO in source code
+- Of course, you can fix what bug you found, or creating new features
 
 Issues
 ------
