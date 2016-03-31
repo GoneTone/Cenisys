@@ -26,9 +26,10 @@ namespace cenisys
 {
 
 StdinReader::StdinReader(Server &server, boost::asio::io_service &ioService)
-    : _server(server), _ioService(ioService), _running(true),
-      _asyncThread(std::bind(&StdinReader::asyncWorker, this))
+    : _server(server), _ioService(ioService)
 {
+    _running = true;
+    _asyncThread = std::thread(std::bind(&StdinReader::asyncWorker, this));
 }
 
 StdinReader::~StdinReader()

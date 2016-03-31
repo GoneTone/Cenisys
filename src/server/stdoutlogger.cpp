@@ -25,9 +25,10 @@
 namespace cenisys
 {
 StdoutLogger::StdoutLogger(Server &server, boost::asio::io_service &ioService)
-    : _server(server), _ioService(ioService), _running(true),
-      _asyncThread(std::bind(&StdoutLogger::asyncWorker, this))
+    : _server(server), _ioService(ioService)
 {
+    _running = true;
+    _asyncThread = std::thread(std::bind(&StdoutLogger::asyncWorker, this));
     _backendHandle = _server.getLogger().registerBackend(std::make_tuple(
         std::bind(
             static_cast<void (StdoutLogger::*)(const boost::locale::format &)>(
