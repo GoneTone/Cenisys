@@ -22,6 +22,7 @@ translation_download:
      - po/ 
   only:
    - master
+  allow_failure: true
 
 build:linux:
   stage: build
@@ -47,6 +48,7 @@ zanata_upload:
    - zanata-cli -B push --url $ZANATA_URL --username $ZANATA_USERNAME --key $ZANATA_KEY
   only:
    - master
+  allow_failure: true
 
 pages:
   stage: deploy
