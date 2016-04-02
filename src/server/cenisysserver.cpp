@@ -25,16 +25,18 @@
 #include <boost/locale/generator.hpp>
 #include <boost/locale/message.hpp>
 #include "config.h"
+#include "config/configsection.h"
 #include "server/cenisysserver.h"
 
 namespace cenisys
 {
 
-CenisysServer::CenisysServer() : _termSignals(_ioService, SIGINT, SIGTERM)
+CenisysServer::CenisysServer(const boost::filesystem::path &dataDir,
+                             boost::locale::generator &localeGen)
+    : _dataDir(dataDir), _localeGen(localeGen),
+      _termSignals(_ioService, SIGINT, SIGTERM),
+      _configManager(*this, _dataDir / "config")
 {
-    _localeGen.add_messages_path(PACKAGE_LOCALE_DIR);
-    _localeGen.set_default_messages_domain(GETTEXT_PACKAGE);
-    std::locale::global(_localeGen(""));
     _oldCoutLoc = std::cout.imbue(std::locale());
     std::cout << boost::locale::format(
                      boost::locale::translate("Starting Cenisys {1}")) %
@@ -51,8 +53,27 @@ CenisysServer::~CenisysServer()
 
 int CenisysServer::run()
 {
+    _config = _configManager.getConfig("cenisys");
     start();
+    unsigned int threads =
+        _config->getUInt(ConfigSection::Path() / "threads", 0);
+    if(threads == 0)
+        threads = std::thread::hardware_concurrency();
+    if(threads == 0)
+        threads = 1;
+    for(unsigned int i = 1; i < threads; i++)
+    {
+        _threads.emplace_back(
+            static_cast<std::size_t (boost::asio::io_service::*)()>(
+                &boost::asio::io_service::run),
+            &_ioService);
+    }
     _ioService.run();
+    for(std::thread &t : _threads)
+    {
+        t.join();
+    }
+    _config.reset();
     return 0;
 }
 
@@ -94,6 +115,11 @@ void CenisysServer::unregisterCommand(Server::RegisteredCommandHandler handle)
 ServerLogger &CenisysServer::getLogger()
 {
     return _logger;
+}
+
+std::shared_ptr<ConfigSection> CenisysServer::getConfig(const std::string &name)
+{
+    return _configManager.getConfig(name);
 }
 
 void CenisysServer::start()

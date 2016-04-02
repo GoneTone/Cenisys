@@ -23,14 +23,19 @@
 #include <locale>
 #include <memory>
 #include <mutex>
+#include <thread>
+#include <vector>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/signal_set.hpp>
+#include <boost/filesystem/path.hpp>
 #include <boost/locale/generator.hpp>
 #include "server/server.h"
 #include "server/cenisysserverlogger.h"
 #include "server/stdinreader.h"
 #include "server/stdoutlogger.h"
+#include "server/cenisysconfigmanager.h"
 #include "command/defaultcommandhandlers.h"
+#include "config/configsection.h"
 
 namespace cenisys
 {
@@ -38,14 +43,14 @@ namespace cenisys
 class CenisysServer : public Server
 {
 public:
-    CenisysServer();
+    CenisysServer(const boost::filesystem::path &dataDir,
+                  boost::locale::generator &localeGen);
     ~CenisysServer();
 
     int run();
     void terminate();
 
     std::locale getLocale(std::string locale);
-
     bool dispatchCommand(std::string command);
 
     RegisteredCommandHandler registerCommand(CommandHandler handler);
@@ -53,21 +58,27 @@ public:
 
     ServerLogger &getLogger();
 
+    std::shared_ptr<ConfigSection> getConfig(const std::string &name);
+
 private:
     void start();
     void stop();
 
     std::once_flag _stopFlag;
     std::locale _oldCoutLoc;
-    boost::locale::generator _localeGen;
+    boost::filesystem::path _dataDir;
+    boost::locale::generator &_localeGen;
     boost::asio::io_service _ioService;
+    std::vector<std::thread> _threads;
     boost::asio::signal_set _termSignals;
     CommandHandlerList _commandList;
     std::mutex _registerCommandLock;
     CenisysServerLogger _logger;
+    CenisysConfigManager _configManager;
     std::unique_ptr<StdinReader> _stdinReader;
     std::unique_ptr<StdoutLogger> _stdoutLogger;
     std::unique_ptr<DefaultCommandHandlers> _defaultCommands;
+    std::shared_ptr<ConfigSection> _config;
 };
 
 } // namespace cenisys
