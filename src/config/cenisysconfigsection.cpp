@@ -51,7 +51,7 @@ CenisysConfigSection::CenisysConfigSection(
             _filePath);
     }
     // HACK: yaml-cpp bug
-    _root.SetStyle(YAML::EmitterStyle::Default);
+    _root[""];
 }
 
 CenisysConfigSection::~CenisysConfigSection()
