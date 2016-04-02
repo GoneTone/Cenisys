@@ -30,8 +30,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/locale/generator.hpp>
 #include "server/server.h"
-#include "server/stdinreader.h"
-#include "server/stdoutlogger.h"
+#include "server/threadedterminalconsole.h"
 #include "server/cenisysconfigmanager.h"
 #include "command/defaultcommandhandlers.h"
 #include "config/configsection.h"
@@ -76,8 +75,7 @@ private:
     CommandHandlerList _commandList;
     std::mutex _registerCommandLock;
     CenisysConfigManager _configManager;
-    std::unique_ptr<StdinReader> _stdinReader;
-    std::unique_ptr<StdoutLogger> _stdoutLogger;
+    std::unique_ptr<ThreadedTerminalConsole> _terminalConsole;
     std::unique_ptr<DefaultCommandHandlers> _defaultCommands;
     LoggerBackendList _loggerBackends;
     std::mutex _loggerBackendListLock;

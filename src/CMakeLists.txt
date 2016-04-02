@@ -15,8 +15,7 @@ add_library(cenisys SHARED
     command/defaultcommandhandlers.cpp
     config/cenisysconfigsection.cpp
     server/cenisysserver.cpp
-    server/stdinreader.cpp
-    server/stdoutlogger.cpp
+    server/threadedterminalconsole.cpp
     server/cenisysconfigmanager.cpp
     )
 target_link_libraries(cenisys PRIVATE
@@ -30,11 +29,13 @@ target_link_libraries(cenisys PRIVATE
 add_executable(cenisyslauncher main.cpp)
 target_link_libraries(cenisyslauncher PRIVATE
     cenisys
+    Threads::Threads
     Boost::boost
     Boost::filesystem
     Boost::locale
     Boost::program_options
     Boost::system
+    YamlCpp
     )
 set_property(TARGET cenisyslauncher cenisys PROPERTY CXX_STANDARD 14)
 set_property(TARGET cenisyslauncher cenisys PROPERTY CXX_STANDARD_REQUIRED YES)

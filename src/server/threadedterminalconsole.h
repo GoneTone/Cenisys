@@ -1,5 +1,5 @@
 /*
- * Read commands from standard input.
+ * ThreadedTerminalConsole
  * Copyright (C) 2016 iTX Technologies
  *
  * This file is part of Cenisys.
@@ -17,10 +17,14 @@
  * You should have received a copy of the GNU General Public License
  * along with Cenisys.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef CENISYS_STDINREADER_H
-#define CENISYS_STDINREADER_H
+#ifndef CENISYS_THREADEDTERMINALCONSOLE_H
+#define CENISYS_THREADEDTERMINALCONSOLE_H
 
 #include <atomic>
+#include <condition_variable>
+#include <locale>
+#include <mutex>
+#include <queue>
 #include <thread>
 #include <boost/asio/io_service.hpp>
 #include "server/server.h"
@@ -28,20 +32,33 @@
 namespace cenisys
 {
 
-class StdinReader
+class ThreadedTerminalConsole
 {
 public:
-    StdinReader(Server &server, boost::asio::io_service &ioService);
-    ~StdinReader();
+    ThreadedTerminalConsole(Server &server, boost::asio::io_service &ioService);
+    ~ThreadedTerminalConsole();
 
 private:
-    void asyncWorker();
+    void readWorker();
+
+    void writeWorker();
+    template <typename T>
+    void log(const T &content);
 
     Server &_server;
     boost::asio::io_service &_ioService;
     std::atomic_bool _running;
-    std::thread _asyncThread;
+
+    std::thread _readThread;
+
+    std::thread _writeThread;
+    std::locale _locale;
+    Server::RegisteredLoggerBackend _loggerBackendHandle;
+    std::queue<std::string> _writeQueue;
+    std::mutex _writeQueueLock;
+    std::condition_variable _writeQueueNotifier;
 };
 
 } // namespace cenisys
-#endif // CENISYS_STDINREADER_H
+
+#endif // CENISYS_THREADEDTERMINALCONSOLE_H

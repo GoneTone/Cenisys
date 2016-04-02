@@ -46,6 +46,14 @@ CenisysServer::~CenisysServer()
 int CenisysServer::run()
 {
     _config = _configManager.getConfig("cenisys");
+    if(_config->getBool(ConfigSection::Path() / "console", true))
+    {
+        _terminalConsole =
+            std::make_unique<ThreadedTerminalConsole>(*this, _ioService);
+    }
+    log(boost::locale::format(
+            boost::locale::translate("Starting Cenisys {1}.")) %
+        SERVER_VERSION);
     start();
     unsigned int threads =
         _config->getUInt(ConfigSection::Path() / "threads", 0);
@@ -53,6 +61,9 @@ int CenisysServer::run()
         threads = std::thread::hardware_concurrency();
     if(threads == 0)
         threads = 1;
+    log(boost::locale::format(boost::locale::translate(
+            "Spinning up {1} thread.", "Spinning up {1} threads.", threads)) %
+        threads);
     for(unsigned int i = 1; i < threads; i++)
     {
         _threads.emplace_back(
@@ -61,10 +72,13 @@ int CenisysServer::run()
             &_ioService);
     }
     _ioService.run();
+    log(boost::locale::translate("Waiting threads to finish..."));
     for(std::thread &t : _threads)
     {
         t.join();
     }
+    log(boost::locale::translate("Server successfully terminated."));
+    _terminalConsole.reset();
     _config.reset();
     return 0;
 }
@@ -141,16 +155,6 @@ void CenisysServer::start()
 {
     _ioService.post([this]
                     {
-                        _stdoutLogger =
-                            std::make_unique<StdoutLogger>(*this, _ioService);
-                    });
-    _ioService.post([this]
-                    {
-                        _stdinReader =
-                            std::make_unique<StdinReader>(*this, _ioService);
-                    });
-    _ioService.post([this]
-                    {
                         _defaultCommands =
                             std::make_unique<DefaultCommandHandlers>(*this);
                     });
@@ -163,14 +167,6 @@ void CenisysServer::stop()
     _ioService.post([this]
                     {
                         _defaultCommands.reset();
-                    });
-    _ioService.post([this]
-                    {
-                        _stdinReader.reset();
-                    });
-    _ioService.post([this]
-                    {
-                        _stdoutLogger.reset();
                     });
 }
 
