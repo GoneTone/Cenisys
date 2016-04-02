@@ -30,7 +30,6 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/locale/generator.hpp>
 #include "server/server.h"
-#include "server/cenisysserverlogger.h"
 #include "server/stdinreader.h"
 #include "server/stdoutlogger.h"
 #include "server/cenisysconfigmanager.h"
@@ -56,7 +55,10 @@ public:
     RegisteredCommandHandler registerCommand(CommandHandler handler);
     void unregisterCommand(RegisteredCommandHandler handle);
 
-    ServerLogger &getLogger();
+    void log(const boost::locale::format &content);
+    void log(const boost::locale::message &content);
+    RegisteredLoggerBackend registerBackend(LoggerBackend backend);
+    void unregisterBackend(RegisteredLoggerBackend handle);
 
     std::shared_ptr<ConfigSection> getConfig(const std::string &name);
 
@@ -73,11 +75,12 @@ private:
     boost::asio::signal_set _termSignals;
     CommandHandlerList _commandList;
     std::mutex _registerCommandLock;
-    CenisysServerLogger _logger;
     CenisysConfigManager _configManager;
     std::unique_ptr<StdinReader> _stdinReader;
     std::unique_ptr<StdoutLogger> _stdoutLogger;
     std::unique_ptr<DefaultCommandHandlers> _defaultCommands;
+    LoggerBackendList _loggerBackends;
+    std::mutex _loggerBackendListLock;
     std::shared_ptr<ConfigSection> _config;
 };
 

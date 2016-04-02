@@ -45,7 +45,7 @@ CenisysConfigSection::CenisysConfigSection(
     }
     else
     {
-        _server.getLogger().log(
+        _server.log(
             boost::locale::format(boost::locale::translate(
                 "Config file {1} does not exist, using default values")) %
             _filePath);
@@ -197,7 +197,7 @@ CenisysConfigSection::getKeys(const ConfigSection::Path &path)
     {
         if(!item.first.IsScalar() || !item.second.IsScalar())
         {
-            _server.getLogger().log(
+            _server.log(
                 boost::locale::format(boost::locale::translate(
                     "Invalid entry in map {1} of configuration file {2}: "
                     "removing")) %
@@ -224,7 +224,7 @@ YAML::Node CenisysConfigSection::correctParent(const ConfigSection::Path &path)
     {
         if(!_root.IsMap())
         {
-            _server.getLogger().log(
+            _server.log(
                 boost::locale::format(boost::locale::translate(
                     "Configuration file {1} is invalid: using defaults")) %
                 _filePath);
@@ -238,7 +238,7 @@ YAML::Node CenisysConfigSection::correctParent(const ConfigSection::Path &path)
         {
             if(!current[key].IsMap())
             {
-                _server.getLogger().log(
+                _server.log(
                     boost::locale::format(boost::locale::translate(
                         "Section {1} in configuration file {2} is invalid: "
                         "using defaults")) %
@@ -264,10 +264,10 @@ T CenisysConfigSection::getValue(const ConfigSection::Path &path,
         !boost::conversion::try_lexical_convert(parent[key].Scalar(), result)))
     {
         parent.remove(key);
-        _server.getLogger().log(boost::locale::format(boost::locale::translate(
-                                    "Item {1} in configuration file {2} is "
-                                    "invalid: using defaults")) %
-                                key % _filePath);
+        _server.log(boost::locale::format(boost::locale::translate(
+                        "Item {1} in configuration file {2} is "
+                        "invalid: using defaults")) %
+                    key % _filePath);
     }
     if(!parent[key] || parent.IsNull())
     {
@@ -302,10 +302,10 @@ std::vector<T> CenisysConfigSection::getList(const ConfigSection::Path &path,
         }(parent[key])))
     {
         parent.remove(key);
-        _server.getLogger().log(boost::locale::format(boost::locale::translate(
-                                    "Item {1} in configuration file {2} is "
-                                    "invalid: using defaults")) %
-                                key % _filePath);
+        _server.log(boost::locale::format(boost::locale::translate(
+                        "Item {1} in configuration file {2} is "
+                        "invalid: using defaults")) %
+                    key % _filePath);
     }
     if(!parent[key] || parent.IsNull())
     {
@@ -325,10 +325,10 @@ void CenisysConfigSection::setValue(const ConfigSection::Path &path,
     if(parent[key] && !parent.IsNull() && !parent[key].IsScalar())
     {
         parent.remove(key);
-        _server.getLogger().log(boost::locale::format(boost::locale::translate(
-                                    "Changing type of item {1} in "
-                                    "configuration file {2} to scalar")) %
-                                key % _filePath);
+        _server.log(boost::locale::format(boost::locale::translate(
+                        "Changing type of item {1} in "
+                        "configuration file {2} to scalar")) %
+                    key % _filePath);
     }
     parent[key] = value;
 }
@@ -353,10 +353,10 @@ void CenisysConfigSection::setList(const ConfigSection::Path &path,
         }(parent[key])))
     {
         parent.remove(key);
-        _server.getLogger().log(boost::locale::format(boost::locale::translate(
-                                    "Changing type of item {1} in "
-                                    "configuration file {2} to sequence")) %
-                                key % _filePath);
+        _server.log(boost::locale::format(boost::locale::translate(
+                        "Changing type of item {1} in "
+                        "configuration file {2} to sequence")) %
+                    key % _filePath);
     }
     parent[key] = value;
 }

@@ -15,7 +15,6 @@ add_library(cenisys SHARED
     command/defaultcommandhandlers.cpp
     config/cenisysconfigsection.cpp
     server/cenisysserver.cpp
-    server/cenisysserverlogger.cpp
     server/stdinreader.cpp
     server/stdoutlogger.cpp
     server/cenisysconfigmanager.cpp

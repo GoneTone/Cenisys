@@ -29,7 +29,7 @@ StdoutLogger::StdoutLogger(Server &server, boost::asio::io_service &ioService)
 {
     _running = true;
     _asyncThread = std::thread(std::bind(&StdoutLogger::asyncWorker, this));
-    _backendHandle = _server.getLogger().registerBackend(std::make_tuple(
+    _backendHandle = _server.registerBackend(std::make_tuple(
         std::bind(
             static_cast<void (StdoutLogger::*)(const boost::locale::format &)>(
                 &StdoutLogger::log),
@@ -42,7 +42,7 @@ StdoutLogger::StdoutLogger(Server &server, boost::asio::io_service &ioService)
 
 StdoutLogger::~StdoutLogger()
 {
-    _server.getLogger().unregisterBackend(_backendHandle);
+    _server.unregisterBackend(_backendHandle);
     std::unique_lock<std::mutex> lock(_writeQueueLock);
     _running = false;
     lock.unlock();

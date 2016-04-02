@@ -24,7 +24,10 @@
 #include <forward_list>
 #include <locale>
 #include <string>
-#include "server/serverlogger.h"
+#include <tuple>
+#include <boost/locale/format.hpp>
+#include <boost/locale/message.hpp>
+#include "config/configsection.h"
 
 namespace cenisys
 {
@@ -38,6 +41,12 @@ public:
     using CommandHandler = std::function<bool(const std::string &)>;
     using CommandHandlerList = std::forward_list<CommandHandler>;
     using RegisteredCommandHandler = CommandHandlerList::const_iterator;
+
+    using LogFormat = std::function<void(const boost::locale::format &)>;
+    using LogMessage = std::function<void(const boost::locale::message &)>;
+    using LoggerBackend = std::tuple<LogFormat, LogMessage>;
+    using LoggerBackendList = std::forward_list<LoggerBackend>;
+    using RegisteredLoggerBackend = LoggerBackendList::const_iterator;
 
     virtual ~Server() = default;
 
@@ -77,10 +86,32 @@ public:
     virtual void unregisterCommand(RegisteredCommandHandler handle) = 0;
 
     //!
-    //! \brief Get the server's logger.
-    //! \return Reference to the server's logger.
+    //! \brief Log formatted text to the server log.
+    //! \param content The content in string. May contain color codes.
     //!
-    virtual ServerLogger &getLogger() = 0;
+    virtual void log(const boost::locale::format &content) = 0;
+
+    //!
+    //! \brief Log translated text to the server log.
+    //! \param content The content in string.
+    //!
+    virtual void log(const boost::locale::message &content) = 0;
+
+    //!
+    //! \brief Register a logger backend.
+    //! \param backend The function to call to log. Must not block.
+    //! \return A handle to the registered backend.
+    //!
+    virtual RegisteredLoggerBackend registerBackend(LoggerBackend backend) = 0;
+
+    //!
+    //! \brief Unregister the logger backend.
+    //! \param handle The handle returned by registerBackend.
+    //!
+    virtual void unregisterBackend(RegisteredLoggerBackend handle) = 0;
+
+    virtual std::shared_ptr<ConfigSection>
+    getConfig(const std::string &name) = 0;
 };
 
 } // namespace cenisys

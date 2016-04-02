@@ -92,8 +92,8 @@ bool CenisysServer::dispatchCommand(std::string command)
     for(Server::CommandHandler &handler : _commandList)
         if(handler(command))
             return true;
-    _logger.log(
-        boost::locale::format(boost::locale::translate("Unknown command {1}")) %
+    // TODO: command sender
+    log(boost::locale::format(boost::locale::translate("Unknown command {1}")) %
         command);
     return false;
 }
@@ -112,9 +112,32 @@ void CenisysServer::unregisterCommand(Server::RegisteredCommandHandler handle)
     _commandList.erase_after(handle);
 }
 
-ServerLogger &CenisysServer::getLogger()
+void CenisysServer::log(const boost::locale::format &content)
 {
-    return _logger;
+    std::lock_guard<std::mutex> lock(_loggerBackendListLock);
+    for(Server::LoggerBackend backend : _loggerBackends)
+        std::get<Server::LogFormat>(backend)(content);
+}
+
+void CenisysServer::log(const boost::locale::message &content)
+{
+    std::lock_guard<std::mutex> lock(_loggerBackendListLock);
+    for(Server::LoggerBackend backend : _loggerBackends)
+        std::get<Server::LogFormat>(backend)(content);
+}
+
+Server::RegisteredLoggerBackend
+CenisysServer::registerBackend(Server::LoggerBackend backend)
+{
+    std::lock_guard<std::mutex> lock(_loggerBackendListLock);
+    _loggerBackends.push_front(backend);
+    return _loggerBackends.before_begin();
+}
+
+void CenisysServer::unregisterBackend(Server::RegisteredLoggerBackend handle)
+{
+    std::lock_guard<std::mutex> lock(_loggerBackendListLock);
+    _loggerBackends.erase_after(handle);
 }
 
 std::shared_ptr<ConfigSection> CenisysServer::getConfig(const std::string &name)

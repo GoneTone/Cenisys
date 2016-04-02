@@ -47,7 +47,7 @@ private:
     Server &_server;
     std::locale _locale;
     boost::asio::io_service &_ioService;
-    ServerLogger::RegisteredLoggerBackend _backendHandle;
+    Server::RegisteredLoggerBackend _backendHandle;
     bool _running;
     std::thread _asyncThread;
     std::queue<std::string> _writeQueue;
