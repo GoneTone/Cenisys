@@ -37,18 +37,10 @@ CenisysServer::CenisysServer(const boost::filesystem::path &dataDir,
       _termSignals(_ioService, SIGINT, SIGTERM),
       _configManager(*this, _dataDir / "config")
 {
-    _oldCoutLoc = std::cout.imbue(std::locale());
-    std::cout << boost::locale::format(
-                     boost::locale::translate("Starting Cenisys {1}")) %
-                     SERVER_VERSION
-              << std::endl;
 }
 
 CenisysServer::~CenisysServer()
 {
-    std::cout << boost::locale::translate("Cenisys successfully stopped")
-              << std::endl;
-    std::cout.imbue(_oldCoutLoc);
 }
 
 int CenisysServer::run()
