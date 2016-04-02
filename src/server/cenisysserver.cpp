@@ -33,7 +33,7 @@ namespace cenisys
 
 CenisysServer::CenisysServer(const boost::filesystem::path &dataDir,
                              boost::locale::generator &localeGen)
-    : _dataDir(dataDir), _localeGen(localeGen),
+    : _dataDir(dataDir), _localeGen(localeGen), _strand(_ioService),
       _termSignals(_ioService, SIGINT, SIGTERM),
       _configManager(*this, _dataDir / "config")
 {
@@ -45,6 +45,7 @@ CenisysServer::~CenisysServer()
 
 int CenisysServer::run()
 {
+    _strand.post(std::bind(&CenisysServer::start, this));
     _config = _configManager.getConfig("cenisys");
     if(_config->getBool(ConfigSection::Path() / "console", true))
     {
@@ -54,7 +55,6 @@ int CenisysServer::run()
     log(boost::locale::format(
             boost::locale::translate("Starting Cenisys {1}.")) %
         SERVER_VERSION);
-    start();
     unsigned int threads =
         _config->getUInt(ConfigSection::Path() / "threads", 0);
     if(threads == 0)
@@ -85,7 +85,8 @@ int CenisysServer::run()
 
 void CenisysServer::terminate()
 {
-    std::call_once(_stopFlag, std::bind(&CenisysServer::stop, this));
+    std::call_once(_stopFlag,
+                   _strand.wrap(std::bind(&CenisysServer::stop, this)));
 }
 
 std::locale CenisysServer::getLocale(std::string locale)
@@ -95,6 +96,7 @@ std::locale CenisysServer::getLocale(std::string locale)
 
 bool CenisysServer::dispatchCommand(std::string command)
 {
+    std::lock_guard<std::mutex> lock(_registerCommandLock);
     for(Server::CommandHandler &handler : _commandList)
         if(handler(command))
             return true;
@@ -153,21 +155,14 @@ std::shared_ptr<ConfigSection> CenisysServer::getConfig(const std::string &name)
 
 void CenisysServer::start()
 {
-    _ioService.post([this]
-                    {
-                        _defaultCommands =
-                            std::make_unique<DefaultCommandHandlers>(*this);
-                    });
+    _defaultCommands = std::make_unique<DefaultCommandHandlers>(*this);
     _termSignals.async_wait(std::bind(&Server::terminate, this));
 }
 
 void CenisysServer::stop()
 {
     _termSignals.cancel();
-    _ioService.post([this]
-                    {
-                        _defaultCommands.reset();
-                    });
+    _defaultCommands.reset();
 }
 
 } // namespace cenisys

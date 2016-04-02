@@ -27,6 +27,7 @@
 #include <vector>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/signal_set.hpp>
+#include <boost/asio/strand.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/locale/generator.hpp>
 #include "server/server.h"
@@ -70,6 +71,7 @@ private:
     boost::filesystem::path _dataDir;
     boost::locale::generator &_localeGen;
     boost::asio::io_service _ioService;
+    boost::asio::strand _strand;
     std::vector<std::thread> _threads;
     boost::asio::signal_set _termSignals;
     CommandHandlerList _commandList;
