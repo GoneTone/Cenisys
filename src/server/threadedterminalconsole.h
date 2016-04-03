@@ -27,10 +27,11 @@
 #include <queue>
 #include <thread>
 #include <boost/asio/io_service.hpp>
-#include "server/server.h"
 
 namespace cenisys
 {
+
+class Server;
 
 class ThreadedTerminalConsole
 {

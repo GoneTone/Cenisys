@@ -26,6 +26,7 @@
 #include <boost/locale/message.hpp>
 #include "config.h"
 #include "config/configsection.h"
+#include "command/defaultcommandhandlers.h"
 #include "server/cenisysserver.h"
 
 namespace cenisys

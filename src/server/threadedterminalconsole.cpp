@@ -20,6 +20,7 @@
 #include <iostream>
 #include <boost/locale/format.hpp>
 #include <boost/locale/message.hpp>
+#include "server/server.h"
 #include "threadedterminalconsole.h"
 
 namespace cenisys

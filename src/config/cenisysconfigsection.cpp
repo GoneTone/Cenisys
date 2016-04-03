@@ -27,6 +27,7 @@
 #include <boost/locale/message.hpp>
 #include <boost/system/error_code.hpp>
 #include <yaml-cpp/yaml.h>
+#include "server/server.h"
 #include "cenisysconfigsection.h"
 
 namespace cenisys

@@ -24,10 +24,11 @@
 #include <boost/filesystem/path.hpp>
 #include <yaml-cpp/node/node.h>
 #include "config/configsection.h"
-#include "server/server.h"
 
 namespace cenisys
 {
+
+class Server;
 
 class CenisysConfigSection : public ConfigSection
 {

@@ -27,10 +27,11 @@
 #include <tuple>
 #include <boost/locale/format.hpp>
 #include <boost/locale/message.hpp>
-#include "config/configsection.h"
 
 namespace cenisys
 {
+
+class ConfigSection;
 
 //!
 //! \brief The interface for the server.

@@ -33,11 +33,12 @@
 #include "server/server.h"
 #include "server/threadedterminalconsole.h"
 #include "server/cenisysconfigmanager.h"
-#include "command/defaultcommandhandlers.h"
-#include "config/configsection.h"
 
 namespace cenisys
 {
+
+class ConfigSection;
+class DefaultCommandHandlers;
 
 class CenisysServer : public Server
 {
