@@ -27,7 +27,7 @@ target_link_libraries(cenisys PRIVATE
     YamlCpp
     )
 add_executable(cenisyslauncher main.cpp)
-target_link_libraries(cenisyslauncher PRIVATE
+target_link_libraries(cenisyslauncher
     cenisys
     Threads::Threads
     Boost::boost

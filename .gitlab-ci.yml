@@ -7,6 +7,7 @@ variables:
 stages:
  - prepare
  - build
+ - test
  - deploy
 
 translation_download:
@@ -40,19 +41,20 @@ build:gcc:
     paths:
      - usr/
 
-.build:clang:
+build:unit-test:
   stage: build
   script:
    - mkdir -p build
    - cd build
-   - CC=clang CXX=clang++ CFLAGS="-fprofile-arcs -ftest-coverage -flto" CXXFLAGS="-fprofile-arcs -ftest-coverage -flto" cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo DCMAKE_INSTALL_PREFIX=/usr -DBUILD_DOC=OFF -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
+   - CC=clang CXX=clang++ CFLAGS="-fprofile-instr-generate -fcoverage-mapping -flto" CXXFLAGS="-fprofile-instr-generate -fcoverage-mapping -flto" cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo -DBUILD_DOC=OFF -DBUILD_TEST=ON -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
    - DESTDIR=.. ninja-build install
   cache:
     untracked: true
     paths:
      - build/
+  dependencies: []
   artifacts:
-    name: "cenisys-clang-debug-${CI_BUILD_REF:0:7}"
+    name: "cenisys-test-${CI_BUILD_REF:0:7}"
     paths:
      - usr/
 
@@ -61,14 +63,30 @@ clang-static:
   script:
    - mkdir -p build
    - cd build
-   - scan-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=OFF -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
+   - scan-build -o ../report cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=OFF -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
    - ninja-build
-  dependencies:
+  dependencies: []
   cache:
     untracked: true
     paths:
      - build/
-  allow_failure: true
+  artifacts:
+    name: "cenisys-clang-report-${CI_BUILD_REF:0:7}"
+    paths:
+     - report/
+
+test:unit-test:
+  stage: test
+  script:
+   - mv usr/ -t /
+   - test_runner
+   - llvm-profdata merge -o unit-test.profdata default.profraw
+  dependencies:
+     - build:unit-test
+  artifacts:
+    name: "cenisys-test-cov-${CI_BUILD_REF:0:7}"
+    paths:
+     - unit-test.profdata
 
 zanata_upload:
   stage: deploy
