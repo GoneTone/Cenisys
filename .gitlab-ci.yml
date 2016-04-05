@@ -24,21 +24,51 @@ translation_download:
    - master
   allow_failure: true
 
-build:linux:
+build:gcc:
   stage: build
   script:
    - mkdir -p build
    - cd build
-   - cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
+   - CC=gcc CXX=g++ cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
    - DESTDIR=.. ninja-build install
   cache:
     untracked: true
     paths:
      - build/
   artifacts:
-    name: "cenisys-linux-${CI_BUILD_REF:0:7}"
+    name: "cenisys-gcc-${CI_BUILD_REF:0:7}"
     paths:
      - usr/
+
+build:clang:
+  stage: build
+  script:
+   - mkdir -p build
+   - cd build
+   - CC=clang CXX=clang++ CFLAGS="-fprofile-arcs -ftest-coverage -flto" CXXFLAGS="-fprofile-arcs -ftest-coverage -flto" cmake -G Ninja -DCMAKE_BUILD_TYPE=RelWithDebInfo DCMAKE_INSTALL_PREFIX=/usr -DBUILD_DOC=OFF -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
+   - DESTDIR=.. ninja-build install
+  cache:
+    untracked: true
+    paths:
+     - build/
+  artifacts:
+    name: "cenisys-clang-debug-${CI_BUILD_REF:0:7}"
+    paths:
+     - usr/
+     
+clang-static:
+  stage: build
+  script:
+   - mkdir -p build
+   - cd build
+   - scan-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
+   - ninja-build
+  dependencies:
+  cache:
+    untracked: true
+    paths:
+     - build/
+  allow_failure: true
 
 zanata_upload:
   stage: deploy
@@ -53,7 +83,7 @@ zanata_upload:
 pages:
   stage: deploy
   dependencies:
-   - build:linux
+   - build:gcc
   script:
    - cp -r usr/share/doc/cenisys/html/ public
   artifacts:
