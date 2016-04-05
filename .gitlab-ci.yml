@@ -40,7 +40,7 @@ build:gcc:
     paths:
      - usr/
 
-build:clang:
+.build:clang:
   stage: build
   script:
    - mkdir -p build
@@ -55,13 +55,13 @@ build:clang:
     name: "cenisys-clang-debug-${CI_BUILD_REF:0:7}"
     paths:
      - usr/
-     
+
 clang-static:
   stage: build
   script:
    - mkdir -p build
    - cd build
-   - scan-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
+   - scan-build cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=OFF -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
    - ninja-build
   dependencies:
   cache:
