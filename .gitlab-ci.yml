@@ -63,13 +63,9 @@ clang-static:
   script:
    - mkdir -p build
    - cd build
-   - scan-build -o ../report cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=OFF -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
-   - ninja-build
+   - scan-build -o ../report cmake -G Ninja -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOC=OFF -DBUILD_TEST=ON -DVERSION_SUFFIX=`[ -z "$CI_BUILD_TAG" ] && echo "${CI_BUILD_REF:0:7}" || echo ""` ..
+   - scan-build -o ../report ninja-build
   dependencies: []
-  cache:
-    untracked: true
-    paths:
-     - build/
   artifacts:
     name: "cenisys-clang-report-${CI_BUILD_REF:0:7}"
     paths:
