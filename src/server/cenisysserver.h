@@ -20,14 +20,15 @@
 #ifndef CENISYS_CENISYSSERVER_H
 #define CENISYS_CENISYSSERVER_H
 
+#include <atomic>
 #include <locale>
 #include <memory>
 #include <mutex>
+#include <shared_mutex>
 #include <thread>
 #include <vector>
 #include <boost/asio/io_service.hpp>
 #include <boost/asio/signal_set.hpp>
-#include <boost/asio/strand.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/locale/generator.hpp>
 #include "server/server.h"
@@ -50,6 +51,8 @@ public:
     int run();
     void terminate();
 
+    void processEvent(std::function<void()> &&func);
+
     std::locale getLocale(std::string locale);
     bool dispatchCommand(std::string command);
 
@@ -64,15 +67,27 @@ public:
     std::shared_ptr<ConfigSection> getConfig(const std::string &name);
 
 private:
+    enum class State
+    {
+        NotStarted, // Postpone all events
+        Running,    // Accept events
+        Stopped,    // Discard any events
+    };
+
     void start();
     void stop();
 
-    std::once_flag _stopFlag;
+    template <typename Fn>
+    void runCriticalTask(Fn &&func, std::atomic_size_t &counter);
+    void waitCriticalTask(std::atomic_size_t &counter);
+
+    State _state;
+    // TODO: shared_mutex is C++17
+    std::shared_timed_mutex _stateLock;
     std::locale _oldCoutLoc;
     boost::filesystem::path _dataDir;
     boost::locale::generator &_localeGen;
     boost::asio::io_service _ioService;
-    boost::asio::strand _strand;
     std::vector<std::thread> _threads;
     boost::asio::signal_set _termSignals;
     CommandHandlerList _commandList;

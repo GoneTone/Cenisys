@@ -59,9 +59,11 @@ public:
     virtual int run() = 0;
 
     //!
-    //! \brief Stop the server. Must be called from the server thread.
+    //! \brief Stop the server. May called from any thread.
     //!
     virtual void terminate() = 0;
+
+    virtual void processEvent(std::function<void()> &&func) = 0;
 
     virtual std::locale getLocale(std::string locale) = 0;
 

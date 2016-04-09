@@ -34,7 +34,7 @@ namespace cenisys
 
 CenisysServer::CenisysServer(const boost::filesystem::path &dataDir,
                              boost::locale::generator &localeGen)
-    : _dataDir(dataDir), _localeGen(localeGen), _strand(_ioService),
+    : _dataDir(dataDir), _localeGen(localeGen),
       _termSignals(_ioService, SIGINT, SIGTERM),
       _configManager(*this, _dataDir / "config")
 {
@@ -46,12 +46,12 @@ CenisysServer::~CenisysServer()
 
 int CenisysServer::run()
 {
-    _strand.post(std::bind(&CenisysServer::start, this));
+    _state = State::NotStarted;
+    _ioService.post(std::bind(&CenisysServer::start, this));
     _config = _configManager.getConfig("cenisys");
     if(_config->getBool(ConfigSection::Path() / "console", true))
     {
-        _terminalConsole =
-            std::make_unique<ThreadedTerminalConsole>(*this, _ioService);
+        _terminalConsole = std::make_unique<ThreadedTerminalConsole>(*this);
     }
     log(boost::locale::format(
             boost::locale::translate("Starting Cenisys {1}.")) %
@@ -86,8 +86,44 @@ int CenisysServer::run()
 
 void CenisysServer::terminate()
 {
-    std::call_once(_stopFlag,
-                   _strand.wrap(std::bind(&CenisysServer::stop, this)));
+    _ioService.post(
+        [this]
+        {
+            std::shared_lock<std::shared_timed_mutex> sharedLock(_stateLock);
+            while(_state != State::Running)
+            {
+                if(_state == State::Stopped)
+                    return;
+                sharedLock.unlock();
+                _ioService.poll_one();
+                sharedLock.lock();
+            }
+            sharedLock.unlock();
+            std::unique_lock<std::shared_timed_mutex> exclusiveLock(_stateLock);
+            if(_state == State::Running)
+            {
+                _state = State::Stopped;
+                stop();
+            }
+        });
+}
+
+void CenisysServer::processEvent(std::function<void()> &&func)
+{
+    _ioService.post(
+        [this, func]
+        {
+            std::shared_lock<std::shared_timed_mutex> lock(_stateLock);
+            while(_state != State::Running)
+            {
+                if(_state == State::Stopped)
+                    return;
+                lock.unlock();
+                _ioService.poll_one();
+                lock.lock();
+            }
+            func();
+        });
 }
 
 std::locale CenisysServer::getLocale(std::string locale)
@@ -156,14 +192,49 @@ std::shared_ptr<ConfigSection> CenisysServer::getConfig(const std::string &name)
 
 void CenisysServer::start()
 {
-    _defaultCommands = std::make_unique<DefaultCommandHandlers>(*this);
+    std::atomic_size_t counter(0);
+    runCriticalTask(
+        [this]
+        {
+            _defaultCommands = std::make_unique<DefaultCommandHandlers>(*this);
+        },
+        counter);
+    waitCriticalTask(counter);
     _termSignals.async_wait(std::bind(&Server::terminate, this));
+    std::unique_lock<std::shared_timed_mutex> stateLock(_stateLock);
+    _state = State::Running;
 }
 
 void CenisysServer::stop()
 {
+    std::atomic_size_t counter(0);
     _termSignals.cancel();
-    _defaultCommands.reset();
+    runCriticalTask(
+        [this]
+        {
+            _defaultCommands.reset();
+        },
+        counter);
+    waitCriticalTask(counter);
+}
+
+template <typename Fn>
+void CenisysServer::runCriticalTask(Fn &&func, std::atomic_size_t &counter)
+{
+    counter++;
+    _ioService.post([func, &counter]
+                    {
+                        func();
+                        counter--;
+                    });
+}
+
+void CenisysServer::waitCriticalTask(std::atomic_size_t &counter)
+{
+    while(counter != 0)
+    {
+        _ioService.poll_one();
+    }
 }
 
 } // namespace cenisys

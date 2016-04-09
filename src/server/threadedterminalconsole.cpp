@@ -26,9 +26,8 @@
 namespace cenisys
 {
 
-ThreadedTerminalConsole::ThreadedTerminalConsole(
-    Server &server, boost::asio::io_service &ioService)
-    : _server(server), _ioService(ioService)
+ThreadedTerminalConsole::ThreadedTerminalConsole(Server &server)
+    : _server(server)
 {
     _running = true;
     _readThread = std::thread(&ThreadedTerminalConsole::readWorker, this);
@@ -63,10 +62,11 @@ void ThreadedTerminalConsole::readWorker()
         std::string buf;
         std::getline(std::cin, buf);
         if(!buf.empty())
-            _ioService.post(std::bind(&Server::dispatchCommand, &_server, buf));
+            _server.processEvent(
+                std::bind(&Server::dispatchCommand, &_server, buf));
         if(!std::cin)
         {
-            _ioService.post(std::bind(&Server::terminate, &_server));
+            _server.terminate();
             break;
         }
     }

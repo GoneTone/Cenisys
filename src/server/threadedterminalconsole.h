@@ -26,7 +26,6 @@
 #include <mutex>
 #include <queue>
 #include <thread>
-#include <boost/asio/io_service.hpp>
 
 namespace cenisys
 {
@@ -36,7 +35,7 @@ class Server;
 class ThreadedTerminalConsole
 {
 public:
-    ThreadedTerminalConsole(Server &server, boost::asio::io_service &ioService);
+    ThreadedTerminalConsole(Server &server);
     ~ThreadedTerminalConsole();
 
 private:
@@ -47,7 +46,6 @@ private:
     void log(const T &content);
 
     Server &_server;
-    boost::asio::io_service &_ioService;
     std::atomic_bool _running;
 
     std::thread _readThread;
