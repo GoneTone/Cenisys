@@ -1,6 +1,7 @@
 # TODO: Change this when 1.61 released
 find_package(Boost 1.60
     COMPONENTS filesystem
+    iostreams
     locale
     program_options
     system
@@ -30,6 +31,7 @@ target_link_libraries(cenisys PRIVATE
     Threads::Threads
     Boost::boost
     Boost::filesystem
+    Boost::iostreams
     Boost::locale
     Boost::system
     YamlCpp
